@@ -71,37 +71,21 @@
           </div>
         </div>
 
-        <!-- 层级管理 -->
-        <div class="layer-manager" v-if="elements.length > 0">
-          <h4>层级管理</h4>
-          <div class="layer-list">
+        <!-- 元素列表 -->
+        <div class="element-list-panel" v-if="elements.length > 0">
+          <h4>元素列表</h4>
+          <div class="element-list">
             <div 
               v-for="element in sortedElements" 
               :key="element.id"
-              class="layer-item"
+              class="element-item"
               :class="{ active: selectedElement && selectedElement.id === element.id }"
               @click="selectElement(element)"
             >
-              <div class="layer-info">
+              <div class="element-info">
                 <i :class="getElementIcon(element.type)"></i>
-                <span class="layer-name">{{ getElementName(element) }}</span>
-                <span class="layer-index">{{ element.zIndex }}</span>
-              </div>
-              <div class="layer-actions">
-                <el-button 
-                  size="mini" 
-                  @click.stop="handleLayerAction({ action: 'moveUp', elementId: element.id })"
-                  title="上移"
-                  icon="el-icon-arrow-up"
-                  :disabled="isTopElement(element)"
-                ></el-button>
-                <el-button 
-                  size="mini" 
-                  @click.stop="handleLayerAction({ action: 'moveDown', elementId: element.id })"
-                  title="下移"
-                  icon="el-icon-arrow-down"
-                  :disabled="isBottomElement(element)"
-                ></el-button>
+                <span class="element-name">{{ getElementName(element) }}</span>
+                <span class="element-index">层级 {{ element.zIndex }}</span>
               </div>
             </div>
           </div>
@@ -891,29 +875,28 @@ export default {
   color: #409eff;
 }
 
-.layer-manager {
+.element-list-panel {
   margin-top: 30px;
   padding-top: 20px;
   border-top: 1px solid #e6e6e6;
 }
 
-.layer-manager h4 {
+.element-list-panel h4 {
   margin: 0 0 15px 0;
   color: #666;
   font-size: 14px;
 }
 
-.layer-list {
+.element-list {
   max-height: 300px;
   overflow-y: auto;
 }
 
-.layer-item {
+.element-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  margin-bottom: 4px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
   background: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 4px;
@@ -921,60 +904,49 @@ export default {
   transition: all 0.2s;
 }
 
-.layer-item:hover {
+.element-item:hover {
   background: #e9ecef;
   border-color: #409eff;
+  transform: translateX(2px);
 }
 
-.layer-item.active {
+.element-item.active {
   background: #409eff;
   color: white;
   border-color: #409eff;
 }
 
-.layer-info {
+.element-info {
   display: flex;
   align-items: center;
-  flex: 1;
+  width: 100%;
 }
 
-.layer-info i {
-  margin-right: 8px;
-  font-size: 14px;
+.element-info i {
+  margin-right: 10px;
+  font-size: 16px;
 }
 
-.layer-name {
+.element-name {
   flex: 1;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.layer-index {
+.element-index {
   font-size: 11px;
   background: rgba(0, 0, 0, 0.1);
-  padding: 2px 6px;
-  border-radius: 10px;
+  padding: 3px 8px;
+  border-radius: 12px;
   margin-left: 8px;
-  min-width: 20px;
-  text-align: center;
+  white-space: nowrap;
 }
 
-.layer-item.active .layer-index {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.layer-actions {
-  display: flex;
-  gap: 2px;
-  margin-left: 8px;
-}
-
-.layer-actions .el-button {
-  padding: 2px 4px;
-  min-width: auto;
-  font-size: 12px;
+.element-item.active .element-index {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .editor-main {
