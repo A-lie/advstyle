@@ -95,9 +95,18 @@
       <!-- 中间编辑区域 -->
       <el-main class="editor-main">
         <div class="editor-header">
-          <h3>编辑区域</h3>
+          <div class="editor-title">
+            <h3>编辑区域</h3>
+            <el-input 
+              v-model="programName" 
+              placeholder="请输入节目名称" 
+              style="width: 300px; margin-left: 20px;"
+              size="small"
+            ></el-input>
+          </div>
           <div class="editor-actions">
             <el-button size="small" @click="saveDesign">保存设计</el-button>
+            <el-button size="small" type="warning" @click="saveAsProgram">保存为节目</el-button>
             <el-button size="small" type="primary" @click="previewDesign">预览</el-button>
             <el-button size="small" type="success" @click="deployToDevice">下发到设备</el-button>
           </div>
@@ -272,7 +281,8 @@ export default {
       saveVisible: false,
       deviceSN: '',
       elementIdCounter: 1,
-      designJsonData: ''
+      designJsonData: '',
+      programName: '' // 节目名称
     }
   },
   computed: {
@@ -607,6 +617,176 @@ export default {
         console.error('保存失败:', err)
         this.$message.error('保存失败，JSON 数据格式错误')
       }
+    },
+    // 保存为节目
+    async saveAsProgram() {
+      // 验证节目名称
+      if (!this.programName.trim()) {
+        this.$message.error('请先输入节目名称')
+        return
+      }
+      
+      // 验证是否有元素
+      if (this.elements.length === 0) {
+        this.$message.warning('请先添加一些元素再保存为节目')
+        return
+      }
+      
+      try {
+        // 导入 mockApi
+        const { mockPlayListAPI } = await import('@/services/mockApi')
+        
+        // 转换元素为区域列表
+        const arealist = this.convertElementsToAreas()
+        
+        // 构建节目对象
+        const programData = {
+          advertid: 'adv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          advertname: this.programName.trim(),
+          fullscreen: false,
+          screenwidth: this.canvasWidth,
+          screenheight: this.canvasHeight,
+          duration: 0,
+          repeat: 0,
+          arealist: arealist
+        }
+        
+        // 保存节目
+        await mockPlayListAPI.saveProgram(programData)
+        
+        this.$message.success(`节目"${this.programName}"已保存，可在播放设置中关联使用`)
+        
+        // 询问是否跳转到播放设置
+        this.$confirm('节目已保存成功，是否跳转到播放设置页面创建播放任务？', '提示', {
+          confirmButtonText: '立即跳转',
+          cancelButtonText: '稍后再说',
+          type: 'success'
+        }).then(() => {
+          this.$router.push('/schedule')
+        }).catch(() => {})
+        
+      } catch (error) {
+        console.error('保存节目失败:', error)
+        this.$message.error('保存节目失败，请重试')
+      }
+    },
+    // 将元素转换为区域列表
+    convertElementsToAreas() {
+      return this.elements.map(element => {
+        const area = {
+          areaid: 'area_' + element.id,
+          areaname: this.getElementName(element),
+          areax: Math.round(element.x),
+          areay: Math.round(element.y),
+          areawidth: Math.round(element.width),
+          areaheight: Math.round(element.height),
+          areatype: this.getAreaType(element.type),
+          alpha: element.opacity || 255,
+          bkcolor: element.backgroundColor || '#FFFFFF',
+          reslist: this.convertElementToResources(element)
+        }
+        return area
+      })
+    },
+    // 获取区域类型
+    getAreaType(elementType) {
+      const typeMap = {
+        'text': 0,
+        'image': 1,
+        'video': 2,
+        'container': 1 // 容器当作图片类型
+      }
+      return typeMap[elementType] || 1
+    },
+    // 将元素转换为资源列表
+    convertElementToResources(element) {
+      const resources = []
+      
+      switch (element.type) {
+        case 'text':
+          // 文本元素
+          const texts = element.texts || ['文本内容']
+          texts.forEach((text, index) => {
+            resources.push({
+              resid: 'res_' + element.id + '_' + index,
+              file: null,
+              show: this.getTextShowMode(element.textAlign),
+              showtime: element.interval || 3000,
+              text: text,
+              font: {
+                fontname: 'sans-serif',
+                textcolor: element.fontColor || '#000000',
+                fontsize: element.fontSize || 24,
+                bold: element.fontWeight ? 1 : 0,
+                roll: element.scrollSpeed || 5
+              }
+            })
+          })
+          break
+          
+        case 'image':
+          // 图片元素
+          const images = element.images || []
+          images.forEach((image, index) => {
+            resources.push({
+              resid: 'res_' + element.id + '_' + index,
+              file: {
+                filename: image.name || 'image.jpg',
+                fileurl: image.url,
+                filesize: image.size || 0,
+                md5: 'generated_' + Date.now()
+              },
+              show: element.displayMode === 'stretch' ? 1 : 0,
+              showtime: element.interval || 3000,
+              text: null,
+              font: null
+            })
+          })
+          break
+          
+        case 'video':
+          // 视频元素
+          if (element.videoUrl) {
+            resources.push({
+              resid: 'res_' + element.id,
+              file: {
+                filename: element.videoName || 'video.mp4',
+                fileurl: element.videoUrl,
+                filesize: 0,
+                md5: 'generated_' + Date.now()
+              },
+              show: element.displayMode === 'stretch' ? 1 : 0,
+              showtime: 0,
+              text: null,
+              font: null
+            })
+          }
+          break
+          
+        case 'container':
+          // 容器元素 - 作为背景色区域
+          resources.push({
+            resid: 'res_' + element.id,
+            file: null,
+            show: 0,
+            showtime: 0,
+            text: null,
+            font: null
+          })
+          break
+      }
+      
+      return resources
+    },
+    // 获取文本显示方式
+    getTextShowMode(textAlign) {
+      const modeMap = {
+        'left': 0,
+        'center': 1,
+        'right': 2,
+        'scroll': 3
+      }
+      return modeMap[textAlign] || 0
     },
     previewDesign() {
       if (this.elements.length === 0) {
@@ -960,6 +1140,11 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+}
+
+.editor-title {
+  display: flex;
+  align-items: center;
 }
 
 .editor-header h3 {

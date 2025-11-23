@@ -189,28 +189,122 @@ let mockAdvertList = [
     advertname: '早间促销广告',
     fullscreen: false,
     screenwidth: 1920,
-    screenheight: 1080
+    screenheight: 1080,
+    duration: 0,
+    repeat: 0,
+    arealist: [
+      {
+        areaid: 'area_001',
+        areaname: '主视频区',
+        areax: 0,
+        areay: 0,
+        areawidth: 1920,
+        areaheight: 1080,
+        areatype: 2,
+        alpha: 255,
+        bkcolor: '#000000',
+        reslist: [
+          {
+            resid: 'res_001',
+            file: {
+              filename: 'promo_video.mp4',
+              fileurl: 'http://example.com/videos/promo_video.mp4',
+              filesize: 10485760,
+              md5: 'abc123def456'
+            },
+            show: 0,
+            showtime: 0,
+            text: null,
+            font: null
+          }
+        ]
+      }
+    ]
   },
   {
     advertid: 'adv_002',
     advertname: '下午品牌广告',
     fullscreen: true,
     screenwidth: 3840,
-    screenheight: 2160
+    screenheight: 2160,
+    duration: 60000,
+    repeat: 0,
+    arealist: [
+      {
+        areaid: 'area_002',
+        areaname: '全屏图片区',
+        areax: 0,
+        areay: 0,
+        areawidth: 3840,
+        areaheight: 2160,
+        areatype: 1,
+        alpha: 255,
+        bkcolor: '#FFFFFF',
+        reslist: [
+          {
+            resid: 'res_002',
+            file: {
+              filename: 'brand_image.jpg',
+              fileurl: 'http://example.com/images/brand_image.jpg',
+              filesize: 2097152,
+              md5: 'xyz789uvw012'
+            },
+            show: 0,
+            showtime: 5000,
+            text: null,
+            font: null
+          }
+        ]
+      }
+    ]
   },
   {
     advertid: 'adv_003',
     advertname: '晚间通知字幕',
     fullscreen: false,
     screenwidth: 1920,
-    screenheight: 1080
+    screenheight: 1080,
+    duration: 0,
+    repeat: 0,
+    arealist: [
+      {
+        areaid: 'area_003',
+        areaname: '底部字幕区',
+        areax: 0,
+        areay: 980,
+        areawidth: 1920,
+        areaheight: 100,
+        areatype: 0,
+        alpha: 200,
+        bkcolor: '#000000',
+        reslist: [
+          {
+            resid: 'res_003',
+            file: null,
+            show: 3,
+            showtime: 0,
+            text: '欢迎光临！本周末全场8折优惠，敬请关注！',
+            font: {
+              fontname: 'sans-serif',
+              textcolor: '#FFFF00',
+              fontsize: 48,
+              bold: 1,
+              roll: 5
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     advertid: 'adv_004',
     advertname: '周末特惠广告',
     fullscreen: false,
     screenwidth: 1920,
-    screenheight: 1080
+    screenheight: 1080,
+    duration: 0,
+    repeat: 0,
+    arealist: []
   }
 ]
 
@@ -358,6 +452,59 @@ export const mockPlayListAPI = {
       success: true,
       message: '推送成功'
     }
+  },
+
+  // 保存节目
+  async saveProgram(programData) {
+    await delay()
+    
+    // 检查是否已存在同名节目
+    const existingIndex = mockAdvertList.findIndex(
+      adv => adv.advertname === programData.advertname
+    )
+    
+    if (existingIndex !== -1) {
+      // 更新现有节目
+      mockAdvertList[existingIndex] = programData
+      console.log('更新节目:', programData)
+    } else {
+      // 添加新节目
+      mockAdvertList.push(programData)
+      console.log('添加新节目:', programData)
+    }
+    
+    return {
+      success: true,
+      message: '节目保存成功',
+      data: programData
+    }
+  },
+
+  // 删除节目
+  async deleteProgram(advertid) {
+    await delay()
+    const index = mockAdvertList.findIndex(adv => adv.advertid === advertid)
+    if (index !== -1) {
+      mockAdvertList.splice(index, 1)
+      return {
+        success: true,
+        message: '节目删除成功'
+      }
+    }
+    throw new Error('节目不存在')
+  },
+
+  // 获取单个节目详情
+  async getProgramDetail(advertid) {
+    await delay(200)
+    const program = mockAdvertList.find(adv => adv.advertid === advertid)
+    if (program) {
+      return {
+        success: true,
+        data: program
+      }
+    }
+    throw new Error('节目不存在')
   }
 }
 
