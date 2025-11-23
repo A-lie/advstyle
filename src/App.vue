@@ -12,6 +12,8 @@
       >
         <el-menu-item index="/">首页</el-menu-item>
         <el-menu-item index="/designer">广告设计器</el-menu-item>
+        <el-menu-item index="/schedule">播放设置</el-menu-item>
+        <el-menu-item index="/viewer">JSON预览</el-menu-item>
       </el-menu>
     </el-header>
     <router-view style="height: calc(100vh - 60px);"/>
