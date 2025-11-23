@@ -70,6 +70,42 @@
             </div>
           </div>
         </div>
+
+        <!-- 层级管理 -->
+        <div class="layer-manager" v-if="elements.length > 0">
+          <h4>层级管理</h4>
+          <div class="layer-list">
+            <div 
+              v-for="element in sortedElements" 
+              :key="element.id"
+              class="layer-item"
+              :class="{ active: selectedElement && selectedElement.id === element.id }"
+              @click="selectElement(element)"
+            >
+              <div class="layer-info">
+                <i :class="getElementIcon(element.type)"></i>
+                <span class="layer-name">{{ getElementName(element) }}</span>
+                <span class="layer-index">{{ element.zIndex }}</span>
+              </div>
+              <div class="layer-actions">
+                <el-button 
+                  size="mini" 
+                  @click.stop="handleLayerAction({ action: 'moveUp', elementId: element.id })"
+                  title="上移"
+                  icon="el-icon-arrow-up"
+                  :disabled="isTopElement(element)"
+                ></el-button>
+                <el-button 
+                  size="mini" 
+                  @click.stop="handleLayerAction({ action: 'moveDown', elementId: element.id })"
+                  title="下移"
+                  icon="el-icon-arrow-down"
+                  :disabled="isBottomElement(element)"
+                ></el-button>
+              </div>
+            </div>
+          </div>
+        </div>
       </el-aside>
 
       <!-- 中间编辑区域 -->
@@ -117,6 +153,7 @@
             :is="getPropertyComponentName(selectedElement.type)"
             :element="selectedElement"
             @update="updateElement"
+            @layer-action="handleLayerAction"
           />
         </div>
         
@@ -263,6 +300,10 @@ export default {
         transform: 'scale(0.8)',
         transformOrigin: 'top left'
       }
+    },
+    sortedElements() {
+      // 按zIndex从大到小排序，显示层级关系
+      return [...this.elements].sort((a, b) => b.zIndex - a.zIndex)
     }
   },
   methods: {
@@ -570,6 +611,93 @@ export default {
       console.log('下发数据:', deployData)
       this.$message.success(`已下发到设备 ${this.deviceSN}`)
       this.deployVisible = false
+    },
+    handleLayerAction(data) {
+      const { action, elementId } = data
+      const elementIndex = this.elements.findIndex(el => el.id === elementId)
+      
+      if (elementIndex === -1) return
+      
+      const element = this.elements[elementIndex]
+      const allZIndexes = this.elements.map(el => el.zIndex).sort((a, b) => a - b)
+      
+      switch (action) {
+        case 'moveToTop':
+          // 置于顶层：设置为最大zIndex + 1
+          const maxZIndex = Math.max(...allZIndexes)
+          this.updateElement({ ...element, zIndex: maxZIndex + 1 })
+          this.$message.success('已置于顶层')
+          break
+          
+        case 'moveUp':
+          // 上移一层：找到比当前zIndex大的最小值，与其交换
+          const currentZIndex = element.zIndex
+          const higherZIndexes = allZIndexes.filter(z => z > currentZIndex)
+          if (higherZIndexes.length > 0) {
+            const targetZIndex = Math.min(...higherZIndexes)
+            const targetElement = this.elements.find(el => el.zIndex === targetZIndex)
+            if (targetElement) {
+              this.updateElement({ ...element, zIndex: targetZIndex })
+              this.updateElement({ ...targetElement, zIndex: currentZIndex })
+              this.$message.success('已上移一层')
+            }
+          } else {
+            this.$message.info('已经是最顶层')
+          }
+          break
+          
+        case 'moveDown':
+          // 下移一层：找到比当前zIndex小的最大值，与其交换
+          const currentZIndex2 = element.zIndex
+          const lowerZIndexes = allZIndexes.filter(z => z < currentZIndex2)
+          if (lowerZIndexes.length > 0) {
+            const targetZIndex2 = Math.max(...lowerZIndexes)
+            const targetElement2 = this.elements.find(el => el.zIndex === targetZIndex2)
+            if (targetElement2) {
+              this.updateElement({ ...element, zIndex: targetZIndex2 })
+              this.updateElement({ ...targetElement2, zIndex: currentZIndex2 })
+              this.$message.success('已下移一层')
+            }
+          } else {
+            this.$message.info('已经是最底层')
+          }
+          break
+          
+        case 'moveToBottom':
+          // 置于底层：设置为最小zIndex - 1，但不小于0
+          const minZIndex = Math.min(...allZIndexes)
+          const newZIndex = Math.max(0, minZIndex - 1)
+          this.updateElement({ ...element, zIndex: newZIndex })
+          this.$message.success('已置于底层')
+          break
+      }
+    },
+    getElementIcon(type) {
+      const iconMap = {
+        container: 'el-icon-s-grid',
+        image: 'el-icon-picture',
+        video: 'el-icon-video-camera',
+        text: 'el-icon-edit'
+      }
+      return iconMap[type] || 'el-icon-s-grid'
+    },
+    getElementName(element) {
+      const typeNames = {
+        container: '容器',
+        image: '图片',
+        video: '视频',
+        text: '文字'
+      }
+      const baseName = typeNames[element.type] || '元素'
+      return `${baseName} ${element.id}`
+    },
+    isTopElement(element) {
+      const maxZIndex = Math.max(...this.elements.map(el => el.zIndex))
+      return element.zIndex === maxZIndex
+    },
+    isBottomElement(element) {
+      const minZIndex = Math.min(...this.elements.map(el => el.zIndex))
+      return element.zIndex === minZIndex
     }
   },
   mounted() {
@@ -664,6 +792,92 @@ export default {
   margin-right: 8px;
   font-size: 16px;
   color: #409eff;
+}
+
+.layer-manager {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e6e6e6;
+}
+
+.layer-manager h4 {
+  margin: 0 0 15px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.layer-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.layer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.layer-item:hover {
+  background: #e9ecef;
+  border-color: #409eff;
+}
+
+.layer-item.active {
+  background: #409eff;
+  color: white;
+  border-color: #409eff;
+}
+
+.layer-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.layer-info i {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.layer-name {
+  flex: 1;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.layer-index {
+  font-size: 11px;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.layer-item.active .layer-index {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.layer-actions {
+  display: flex;
+  gap: 2px;
+  margin-left: 8px;
+}
+
+.layer-actions .el-button {
+  padding: 2px 4px;
+  min-width: auto;
+  font-size: 12px;
 }
 
 .editor-main {

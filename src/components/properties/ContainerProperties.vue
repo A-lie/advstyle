@@ -90,15 +90,44 @@
       </el-form-item>
       
       <el-form-item label="层级">
-        <el-slider
-          v-model="localElement.zIndex"
-          :min="0"
-          :max="100"
-          @change="updateElement"
-          show-input
-          :show-input-controls="false"
-          input-size="mini"
-        ></el-slider>
+        <div class="layer-control">
+          <el-slider
+            v-model="localElement.zIndex"
+            :min="0"
+            :max="100"
+            @change="updateElement"
+            show-input
+            :show-input-controls="false"
+            input-size="mini"
+            style="flex: 1; margin-right: 10px;"
+          ></el-slider>
+          <div class="layer-buttons">
+            <el-button 
+              size="mini" 
+              @click="moveToTop"
+              title="置于顶层"
+              icon="el-icon-top"
+            ></el-button>
+            <el-button 
+              size="mini" 
+              @click="moveUp"
+              title="上移一层"
+              icon="el-icon-arrow-up"
+            ></el-button>
+            <el-button 
+              size="mini" 
+              @click="moveDown"
+              title="下移一层"
+              icon="el-icon-arrow-down"
+            ></el-button>
+            <el-button 
+              size="mini" 
+              @click="moveToBottom"
+              title="置于底层"
+              icon="el-icon-bottom"
+            ></el-button>
+          </div>
+        </div>
       </el-form-item>
     </el-form>
   </div>
@@ -139,6 +168,18 @@ export default {
   methods: {
     updateElement() {
       this.$emit('update', this.localElement)
+    },
+    moveToTop() {
+      this.$emit('layer-action', { action: 'moveToTop', elementId: this.localElement.id })
+    },
+    moveUp() {
+      this.$emit('layer-action', { action: 'moveUp', elementId: this.localElement.id })
+    },
+    moveDown() {
+      this.$emit('layer-action', { action: 'moveDown', elementId: this.localElement.id })
+    },
+    moveToBottom() {
+      this.$emit('layer-action', { action: 'moveToBottom', elementId: this.localElement.id })
     }
   }
 }
@@ -188,5 +229,21 @@ export default {
 
 .el-slider__input {
   width: 60px;
+}
+
+.layer-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.layer-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.layer-buttons .el-button {
+  padding: 4px 6px;
+  min-width: auto;
 }
 </style>
