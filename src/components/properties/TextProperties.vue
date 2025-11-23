@@ -240,7 +240,12 @@ export default {
   },
   data() {
     return {
-      localElement: { ...this.element }
+      localElement: {
+        ...this.element,
+        // 确保关键属性有默认值
+        textAlign: this.element.textAlign || 'left',
+        scrollSpeed: this.element.scrollSpeed || 5
+      }
     }
   },
   computed: {
@@ -254,14 +259,28 @@ export default {
   watch: {
     element: {
       handler(newVal) {
-        this.localElement = { ...newVal }
+        // 只在元素ID变化时才重置localElement，避免覆盖用户的修改
+        if (!this.localElement || this.localElement.id !== newVal.id) {
+          this.localElement = { ...newVal }
+        } else {
+          // 如果是同一个元素，只更新那些不是用户正在编辑的属性
+          // 保留用户在属性面板中的修改
+          this.localElement = { ...this.localElement, ...newVal }
+        }
       },
       deep: true
     }
   },
   methods: {
     updateElement() {
-      this.$emit('update', this.localElement)
+      // 确保所有属性都被正确传递，包括 textAlign 和 scrollSpeed
+      const updatedElement = {
+        ...this.localElement,
+        // 明确包含这些关键属性
+        textAlign: this.localElement.textAlign,
+        scrollSpeed: this.localElement.scrollSpeed || 5
+      }
+      this.$emit('update', updatedElement)
     },
     moveToTop() {
       this.$emit('layer-action', { action: 'moveToTop', elementId: this.localElement.id })

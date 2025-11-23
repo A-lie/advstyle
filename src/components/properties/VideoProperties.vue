@@ -231,9 +231,64 @@ export default {
     async changeVideo() {
       const videoFiles = await this.selectFiles('video/*', false)
       if (videoFiles && videoFiles.length > 0) {
-        this.localElement.videoUrl = videoFiles[0].url
-        this.localElement.videoName = videoFiles[0].name
+        const file = videoFiles[0]
+        
+        // 验证文件大小（建议不超过100MB）
+        const maxSize = 100 * 1024 * 1024 // 100MB
+        if (file.size > maxSize) {
+          this.$message.warning('视频文件过大（' + (file.size / 1024 / 1024).toFixed(2) + 'MB），建议使用小于100MB的视频文件')
+        }
+        
+        // 格式兼容性提示（不阻止上传）
+        const formatInfo = this.getVideoFormatInfo(file.type)
+        if (formatInfo.warning) {
+          this.$message.warning(formatInfo.warning)
+        } else if (formatInfo.info) {
+          this.$message.info(formatInfo.info)
+        }
+        
+        this.localElement.videoUrl = file.url
+        this.localElement.videoName = file.name
         this.updateElement()
+        
+        this.$message.success('视频文件已选择，正在加载...')
+      }
+    },
+    getVideoFormatInfo(mimeType) {
+      const formatMap = {
+        'video/mp4': {
+          info: '已加载 MP4 视频，兼容性最佳（推荐使用 H.264 编码）'
+        },
+        'video/webm': {
+          info: '已加载 WebM 视频，现代浏览器支持良好（Safari/iOS 不支持）'
+        },
+        'video/ogg': {
+          warning: '已加载 OGG 视频，部分浏览器不支持（Safari/Edge/IE 不支持）'
+        },
+        'video/quicktime': {
+          warning: '已加载 MOV 视频，建议转换为 MP4 以获得更好的兼容性'
+        },
+        'video/x-msvideo': {
+          warning: '已加载 AVI 视频，浏览器可能不支持，建议转换为 MP4'
+        },
+        'video/x-matroska': {
+          warning: '已加载 MKV 视频，浏览器不支持，请转换为 MP4 或 WebM'
+        }
+      }
+      
+      if (mimeType && formatMap[mimeType]) {
+        return formatMap[mimeType]
+      }
+      
+      // 未知格式
+      if (mimeType && mimeType.startsWith('video/')) {
+        return {
+          warning: '检测到视频格式: ' + mimeType + '，如果无法播放，请转换为 MP4(H.264) 格式'
+        }
+      }
+      
+      return {
+        warning: '无法识别视频格式，推荐使用 MP4(H.264)、WebM(VP9) 或 OGG 格式'
       }
     },
     selectFiles(accept, multiple = false) {
@@ -245,22 +300,39 @@ export default {
         
         input.onchange = (event) => {
           const files = Array.from(event.target.files)
-          const filePromises = files.map(file => {
-            return new Promise((fileResolve) => {
-              const reader = new FileReader()
-              reader.onload = (e) => {
-                fileResolve({
-                  url: e.target.result,
-                  name: file.name,
-                  size: file.size,
-                  type: file.type
-                })
-              }
-              reader.readAsDataURL(file)
-            })
-          })
           
-          Promise.all(filePromises).then(resolve)
+          // 对于视频文件，使用 Blob URL 而不是 Base64
+          if (accept.includes('video')) {
+            const fileData = files.map(file => {
+              // 创建 Blob URL
+              const blobUrl = URL.createObjectURL(file)
+              return {
+                url: blobUrl,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                blob: file // 保存原始文件引用
+              }
+            })
+            resolve(fileData)
+          } else {
+            // 对于图片等其他文件，继续使用 Base64
+            const filePromises = files.map(file => {
+              return new Promise((fileResolve) => {
+                const reader = new FileReader()
+                reader.onload = (e) => {
+                  fileResolve({
+                    url: e.target.result,
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                  })
+                }
+                reader.readAsDataURL(file)
+              })
+            })
+            Promise.all(filePromises).then(resolve)
+          }
         }
         
         input.oncancel = () => resolve(null)

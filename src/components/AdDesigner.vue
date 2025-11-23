@@ -173,6 +173,12 @@
 
     <!-- 预览对话框 -->
     <el-dialog title="预览效果" :visible.sync="previewVisible" width="80%" top="5vh">
+      <div class="preview-header">
+        <p class="preview-tips">
+          <i class="el-icon-info"></i>
+          预览模式下可以看到文字滚动、图片轮播、视频播放等动画效果
+        </p>
+      </div>
       <div class="preview-container">
         <div 
           class="preview-canvas"
@@ -399,10 +405,26 @@ export default {
         case 'video':
           const videoFiles = await this.selectFiles('video/*', false)
           if (videoFiles && videoFiles.length > 0) {
+            const file = videoFiles[0]
+            
+            // 验证文件大小
+            const maxSize = 100 * 1024 * 1024 // 100MB
+            if (file.size > maxSize) {
+              this.$message.warning('视频文件过大（' + (file.size / 1024 / 1024).toFixed(2) + 'MB），可能导致加载失败')
+            }
+            
+            // 格式兼容性提示（不阻止上传）
+            const formatInfo = this.getVideoFormatInfo(file.type)
+            if (formatInfo.warning) {
+              this.$message.warning(formatInfo.warning)
+            } else if (formatInfo.info) {
+              this.$message.info(formatInfo.info)
+            }
+            
             return {
               ...baseElement,
-              videoUrl: videoFiles[0].url,
-              videoName: videoFiles[0].name,
+              videoUrl: file.url,
+              videoName: file.name,
               displayMode: 'center', // center, stretch
               autoplay: true,
               loop: true
@@ -434,22 +456,39 @@ export default {
         
         input.onchange = (event) => {
           const files = Array.from(event.target.files)
-          const filePromises = files.map(file => {
-            return new Promise((fileResolve) => {
-              const reader = new FileReader()
-              reader.onload = (e) => {
-                fileResolve({
-                  url: e.target.result,
-                  name: file.name,
-                  size: file.size,
-                  type: file.type
-                })
-              }
-              reader.readAsDataURL(file)
-            })
-          })
           
-          Promise.all(filePromises).then(resolve)
+          // 对于视频文件，使用 Blob URL 而不是 Base64
+          if (accept.includes('video')) {
+            const fileData = files.map(file => {
+              // 创建 Blob URL
+              const blobUrl = URL.createObjectURL(file)
+              return {
+                url: blobUrl,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                blob: file // 保存原始文件引用
+              }
+            })
+            resolve(fileData)
+          } else {
+            // 对于图片等其他文件，继续使用 Base64
+            const filePromises = files.map(file => {
+              return new Promise((fileResolve) => {
+                const reader = new FileReader()
+                reader.onload = (e) => {
+                  fileResolve({
+                    url: e.target.result,
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                  })
+                }
+                reader.readAsDataURL(file)
+              })
+            })
+            Promise.all(filePromises).then(resolve)
+          }
         }
         
         input.oncancel = () => resolve(null)
@@ -586,6 +625,27 @@ export default {
       }
     },
     previewDesign() {
+      if (this.elements.length === 0) {
+        this.$message.warning('请先添加一些元素再预览')
+        return
+      }
+      
+      // 检查是否有滚动文本或轮播内容
+      const hasScrollText = this.elements.some(el => 
+        el.type === 'text' && el.textAlign === 'scroll'
+      )
+      const hasMultipleImages = this.elements.some(el => 
+        el.type === 'image' && el.images && el.images.length > 1
+      )
+      const hasMultipleTexts = this.elements.some(el => 
+        el.type === 'text' && el.texts && el.texts.length > 1
+      )
+      const hasVideo = this.elements.some(el => el.type === 'video')
+      
+      if (hasScrollText || hasMultipleImages || hasMultipleTexts || hasVideo) {
+        this.$message.success('预览中可以看到动画效果：文字滚动、图片轮播、视频播放等')
+      }
+      
       this.previewVisible = true
     },
     deployToDevice() {
@@ -698,6 +758,43 @@ export default {
     isBottomElement(element) {
       const minZIndex = Math.min(...this.elements.map(el => el.zIndex))
       return element.zIndex === minZIndex
+    },
+    getVideoFormatInfo(mimeType) {
+      const formatMap = {
+        'video/mp4': {
+          info: '已加载 MP4 视频，兼容性最佳（推荐使用 H.264 编码）'
+        },
+        'video/webm': {
+          info: '已加载 WebM 视频，现代浏览器支持良好（Safari/iOS 不支持）'
+        },
+        'video/ogg': {
+          warning: '已加载 OGG 视频，部分浏览器不支持（Safari/Edge/IE 不支持）'
+        },
+        'video/quicktime': {
+          warning: '已加载 MOV 视频，建议转换为 MP4 以获得更好的兼容性'
+        },
+        'video/x-msvideo': {
+          warning: '已加载 AVI 视频，浏览器可能不支持，建议转换为 MP4'
+        },
+        'video/x-matroska': {
+          warning: '已加载 MKV 视频，浏览器不支持，请转换为 MP4 或 WebM'
+        }
+      }
+      
+      if (mimeType && formatMap[mimeType]) {
+        return formatMap[mimeType]
+      }
+      
+      // 未知格式
+      if (mimeType && mimeType.startsWith('video/')) {
+        return {
+          warning: '检测到视频格式: ' + mimeType + '，如果无法播放，请转换为 MP4(H.264) 格式'
+        }
+      }
+      
+      return {
+        warning: '无法识别视频格式，推荐使用 MP4(H.264)、WebM(VP9) 或 OGG 格式'
+      }
     }
   },
   mounted() {
@@ -940,10 +1037,33 @@ export default {
   background: #f0f0f0;
 }
 
+.preview-header {
+  margin-bottom: 15px;
+}
+
+.preview-tips {
+  background: #e6f7ff;
+  border: 1px solid #91d5ff;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin: 0;
+  color: #1890ff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.preview-tips i {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
 .preview-canvas {
   background: white;
   position: relative;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* 确保预览画布中的动画正常显示 */
+  overflow: visible;
 }
 
 .save-container {

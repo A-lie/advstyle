@@ -113,6 +113,12 @@ export default {
       handler() {
         this.setupImageRotation()
       }
+    },
+    'preview': {
+      handler() {
+        // 当进入或退出预览模式时，重新设置图片轮播
+        this.setupImageRotation()
+      }
     }
   },
   methods: {

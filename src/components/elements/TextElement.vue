@@ -22,6 +22,7 @@
         class="scroll-text"
         :style="scrollStyle"
         ref="scrollText"
+        :key="'scroll-' + currentText"
       >
         {{ currentText }}
       </div>
@@ -108,7 +109,7 @@ export default {
       }
     },
     textStyle() {
-      return {
+      const baseStyle = {
         fontSize: this.element.fontSize + 'px',
         color: this.element.fontColor,
         fontWeight: this.element.fontWeight ? 'bold' : 'normal',
@@ -118,6 +119,18 @@ export default {
         alignItems: 'center',
         lineHeight: '1.2'
       }
+      
+      // 为滚动文本调整样式
+      if (this.element.textAlign === 'scroll') {
+        baseStyle.justifyContent = 'flex-start'
+        baseStyle.overflow = 'hidden'
+      } else {
+        baseStyle.justifyContent = this.element.textAlign === 'center' ? 'center' : 
+                                   this.element.textAlign === 'right' ? 'flex-end' : 'flex-start'
+        baseStyle.textAlign = this.element.textAlign
+      }
+      
+      return baseStyle
     },
     textInputStyle() {
       return {
@@ -131,11 +144,13 @@ export default {
       if (this.element.textAlign !== 'scroll') return {}
       
       const speed = this.element.scrollSpeed || 5
-      const duration = Math.max(2, 10 - speed) + 's'
+      // 根据速度计算动画持续时间，速度越快持续时间越短
+      const duration = Math.max(3, 12 - speed) + 's'
       
       return {
         animation: `scrollText ${duration} linear infinite`,
-        whiteSpace: 'nowrap'
+        whiteSpace: 'nowrap',
+        display: 'inline-block'
       }
     },
     currentText() {
@@ -156,12 +171,42 @@ export default {
       handler() {
         this.setupTextRotation()
       }
+    },
+    'preview': {
+      handler(newVal) {
+        console.log('Preview mode changed:', newVal, 'textAlign:', this.element.textAlign)
+        // 当进入或退出预览模式时，重新设置文本轮播
+        this.setupTextRotation()
+        // 重启滚动动画
+        this.$nextTick(() => {
+          this.restartScrollAnimation()
+        })
+      }
+    },
+    'element.textAlign': {
+      handler(newVal, oldVal) {
+        console.log('textAlign changed from', oldVal, 'to', newVal)
+        // 当对齐方式改变时，重启滚动动画
+        this.$nextTick(() => {
+          this.restartScrollAnimation()
+        })
+      }
+    },
+    'element.scrollSpeed': {
+      handler(newVal) {
+        console.log('scrollSpeed changed to', newVal)
+        // 当滚动速度改变时，重启滚动动画
+        this.$nextTick(() => {
+          this.restartScrollAnimation()
+        })
+      }
     }
   },
   methods: {
     setupTextRotation() {
       this.clearTextTimer()
       
+      // 在预览模式或编辑模式下，如果有多个文本且设置了切换间隔，启动轮播
       if (this.element.texts && this.element.texts.length > 1 && this.element.interval > 0) {
         this.textTimer = setInterval(() => {
           this.currentTextIndex = (this.currentTextIndex + 1) % this.element.texts.length
@@ -172,6 +217,25 @@ export default {
       if (this.textTimer) {
         clearInterval(this.textTimer)
         this.textTimer = null
+      }
+    },
+    restartScrollAnimation() {
+      console.log('restartScrollAnimation called, textAlign:', this.element.textAlign)
+      if (this.element.textAlign === 'scroll') {
+        this.$nextTick(() => {
+          const element = this.$refs.scrollText
+          console.log('scrollText element:', element)
+          if (element) {
+            // 强制重启CSS动画
+            element.style.animation = 'none'
+            // 触发重排
+            void element.offsetHeight
+            const speed = this.element.scrollSpeed || 5
+            const duration = Math.max(3, 12 - speed) + 's'
+            console.log('Setting animation with duration:', duration)
+            element.style.animation = `scrollText ${duration} linear infinite`
+          }
+        })
       }
     },
     handleClick() {
@@ -304,6 +368,10 @@ export default {
   mounted() {
     this.currentTextIndex = this.element.currentTextIndex || 0
     this.setupTextRotation()
+    // 启动滚动动画
+    this.$nextTick(() => {
+      this.restartScrollAnimation()
+    })
   },
   beforeDestroy() {
     this.clearTextTimer()
@@ -351,10 +419,13 @@ export default {
 .text-scroll {
   justify-content: flex-start;
   align-items: center;
+  overflow: hidden;
+  position: relative;
 }
 
 .scroll-text {
-  width: 100%;
+  display: inline-block;
+  white-space: nowrap;
 }
 
 @keyframes scrollText {
@@ -364,6 +435,19 @@ export default {
   100% {
     transform: translateX(-100%);
   }
+}
+
+/* 确保动画正常显示 */
+.text-element .scroll-text {
+  animation-play-state: running !important;
+  will-change: transform;
+  animation-fill-mode: both;
+}
+
+/* 确保滚动容器正确设置 */
+.text-element .text-scroll {
+  overflow: hidden !important;
+  position: relative;
 }
 
 .text-input {

@@ -11,16 +11,23 @@
       ref="video"
       :src="element.videoUrl"
       :style="videoStyle"
-      :autoplay="element.autoplay && preview"
+      :autoplay="shouldAutoplay"
       :loop="element.loop"
-      :muted="true"
+      :muted="preview"
       @loadedmetadata="handleVideoLoad"
       @error="handleVideoError"
-      controls
+      :controls="!preview"
+      playsinline
     ></video>
     <div v-else class="placeholder">
       <i class="el-icon-video-camera"></i>
-      <span>视频加载中...</span>
+      <span v-if="!videoError">视频加载中...</span>
+      <div v-else class="error-message">
+        <i class="el-icon-warning"></i>
+        <span>视频加载失败</span>
+        <small v-if="element.videoName">{{ element.videoName }}</small>
+        <small v-if="videoError">{{ videoError }}</small>
+      </div>
     </div>
     
     <div class="video-info" v-if="selected && !preview && element.videoName">
@@ -66,8 +73,14 @@ export default {
       startWidth: 0,
       startHeight: 0,
       startElementX: 0,
-      startElementY: 0
+      startElementY: 0,
+      videoError: null,
+      browserSupport: null
     }
+  },
+  mounted() {
+    // 检测浏览器视频格式支持
+    this.checkBrowserSupport()
   },
   computed: {
     elementStyle() {
@@ -97,6 +110,11 @@ export default {
       }
       
       return style
+    },
+    shouldAutoplay() {
+      // 在预览模式下，如果设置了自动播放则自动播放
+      // 在编辑模式下，不自动播放以避免干扰编辑
+      return this.preview && this.element.autoplay
     }
   },
   watch: {
@@ -114,15 +132,66 @@ export default {
   },
   methods: {
     handleVideoLoad() {
-      // 视频加载成功
+      // 视频加载成功，清除错误状态
+      this.videoError = null
       if (this.preview && this.element.autoplay) {
         this.$refs.video.play().catch(e => {
           console.warn('视频自动播放失败:', e)
         })
       }
     },
-    handleVideoError() {
-      console.error('视频加载失败')
+    handleVideoError(event) {
+      const video = event.target
+      let errorMessage = '未知错误'
+      let errorTip = ''
+      
+      if (video.error) {
+        switch (video.error.code) {
+          case video.error.MEDIA_ERR_ABORTED:
+            errorMessage = '视频加载被中止'
+            errorTip = '请重新选择视频文件'
+            break
+          case video.error.MEDIA_ERR_NETWORK:
+            errorMessage = '网络错误'
+            errorTip = '请检查网络连接'
+            break
+          case video.error.MEDIA_ERR_DECODE:
+            errorMessage = '视频解码失败'
+            errorTip = '视频文件可能已损坏，请尝试使用其他视频'
+            break
+          case video.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+            errorMessage = '不支持的视频格式'
+            errorTip = '请使用 MP4(H.264) 格式的视频文件'
+            break
+        }
+      }
+      
+      this.videoError = errorMessage
+      
+      // 构建日志信息（兼容旧版本语法）
+      const urlPreview = this.element.videoUrl ? 
+        (this.element.videoUrl.startsWith('blob:') ? 
+          this.element.videoUrl : 
+          this.element.videoUrl.substring(0, 100) + '...') : 
+        'N/A'
+      
+      const logInfo = {
+        url: urlPreview,
+        name: this.element.videoName,
+        error: errorMessage,
+        errorCode: video.error ? video.error.code : null,
+        tip: errorTip
+      }
+      console.error('视频加载失败:', logInfo)
+      
+      // 提示用户
+      if (!this.preview) {
+        this.$message({
+          message: errorMessage + (errorTip ? ': ' + errorTip : ''),
+          type: 'error',
+          duration: 5000
+        })
+      }
     },
     handleClick() {
       if (!this.preview) {
@@ -222,6 +291,21 @@ export default {
     },
     handleDelete() {
       this.$emit('delete', this.element.id)
+    },
+    checkBrowserSupport() {
+      // 检测浏览器对各种视频格式的支持
+      const video = document.createElement('video')
+      this.browserSupport = {
+        mp4: video.canPlayType('video/mp4; codecs="avc1.42E01E"'),
+        webm: video.canPlayType('video/webm; codecs="vp8, vorbis"'),
+        webmVP9: video.canPlayType('video/webm; codecs="vp9"'),
+        ogg: video.canPlayType('video/ogg; codecs="theora"')
+      }
+      
+      // 在控制台输出支持信息（仅开发模式）
+      if (process.env.NODE_ENV === 'development') {
+        console.log('浏览器视频格式支持:', this.browserSupport)
+      }
     }
   },
   beforeDestroy() {
@@ -256,6 +340,28 @@ export default {
 .placeholder i {
   font-size: 24px;
   margin-bottom: 8px;
+}
+
+.error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #f56c6c;
+  text-align: center;
+  padding: 10px;
+}
+
+.error-message i {
+  font-size: 32px;
+  color: #f56c6c;
+}
+
+.error-message small {
+  font-size: 11px;
+  color: #999;
+  max-width: 90%;
+  word-break: break-all;
 }
 
 .video-info {
