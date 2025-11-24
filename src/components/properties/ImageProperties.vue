@@ -165,7 +165,7 @@
         </div>
         <el-form-item label="层级" class="zindex-item">
           <div class="zindex-control-wrapper">
-            <!-- <div class="slider-input-group">
+            <div class="slider-input-group">
               <el-slider 
                 v-model="localElement.zIndex" 
                 :min="0" 
@@ -179,7 +179,7 @@
                 size="mini" 
                 class="compact-input"
               ></el-input>
-            </div> -->
+            </div>
             <div class="layer-buttons">
               <el-tooltip effect="dark" content="置于顶层" placement="top">
                 <el-button size="mini" @click="moveToTop" class="layer-btn">
