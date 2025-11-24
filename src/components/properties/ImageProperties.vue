@@ -1,159 +1,81 @@
 <template>
   <div class="image-properties">
     <h4>图片属性</h4>
-    
+
     <el-form size="small" label-width="70px">
       <el-form-item label="位置">
         <div class="slider-group">
           <div class="slider-item">
             <label>X坐标</label>
-            <el-slider
-              v-model="localElement.x"
-              :min="0"
-              :max="getMaxX"
-              :step="1"
-              @change="updateElement"
-              show-input
-              :show-input-controls="false"
-              input-size="mini"
-            ></el-slider>
+            <el-slider v-model="localElement.x" :min="0" :max="getMaxX" :step="1" @change="updateElement" show-input
+              :show-input-controls="false" input-size="mini"></el-slider>
           </div>
           <div class="slider-item">
             <label>Y坐标</label>
-            <el-slider
-              v-model="localElement.y"
-              :min="0"
-              :max="getMaxY"
-              :step="1"
-              @change="updateElement"
-              show-input
-              :show-input-controls="false"
-              input-size="mini"
-            ></el-slider>
+            <el-slider v-model="localElement.y" :min="0" :max="getMaxY" :step="1" @change="updateElement" show-input
+              :show-input-controls="false" input-size="mini"></el-slider>
           </div>
         </div>
       </el-form-item>
-      
+
       <el-form-item label="尺寸">
         <div class="slider-group">
           <div class="slider-item">
             <label>宽度</label>
-            <el-slider
-              v-model="localElement.width"
-              :min="50"
-              :max="2000"
-              :step="1"
-              @change="updateElement"
-              show-input
-              :show-input-controls="false"
-              input-size="mini"
-            ></el-slider>
+            <el-slider v-model="localElement.width" :min="50" :max="2000" :step="1" @change="updateElement" show-input
+              :show-input-controls="false" input-size="mini"></el-slider>
           </div>
           <div class="slider-item">
             <label>高度</label>
-            <el-slider
-              v-model="localElement.height"
-              :min="50"
-              :max="2000"
-              :step="1"
-              @change="updateElement"
-              show-input
-              :show-input-controls="false"
-              input-size="mini"
-            ></el-slider>
+            <el-slider v-model="localElement.height" :min="50" :max="2000" :step="1" @change="updateElement" show-input
+              :show-input-controls="false" input-size="mini"></el-slider>
           </div>
         </div>
       </el-form-item>
-      
+
       <el-form-item label="显示方式">
         <el-select v-model="localElement.displayMode" @change="updateElement">
-          <el-option label="等比例居中" value="center"></el-option>
-          <el-option label="拉伸填充" value="stretch"></el-option>
+          <el-option label="覆盖" value="cover"></el-option>
+          <el-option label="填充" value="fill"></el-option>
+          <el-option label="缩放" value="scale-down"></el-option>
+          <el-option label="无" value="none"></el-option>
         </el-select>
       </el-form-item>
-      
+
       <el-form-item label="背景色">
-        <el-color-picker 
-          v-model="localElement.backgroundColor"
-          @change="updateElement"
-          show-alpha
-          size="small"
-        ></el-color-picker>
+        <el-color-picker v-model="localElement.backgroundColor" @change="updateElement" show-alpha
+          size="small"></el-color-picker>
       </el-form-item>
-      
+
       <el-form-item label="透明度">
         <div class="slider-item">
-          <el-slider
-            v-model="localElement.opacity"
-            :min="0"
-            :max="255"
-            @change="updateElement"
-            show-input
-            :show-input-controls="false"
-            input-size="mini"
-          ></el-slider>
+          <el-slider v-model="localElement.opacity" :min="0" :max="255" @change="updateElement" show-input
+            :show-input-controls="false" input-size="mini"></el-slider>
           <span class="opacity-value">{{ Math.round(localElement.opacity / 255 * 100) }}%</span>
         </div>
       </el-form-item>
-      
+
       <el-form-item label="层级">
         <div class="layer-control">
-          <el-slider
-            v-model="localElement.zIndex"
-            :min="0"
-            :max="100"
-            @change="updateElement"
-            show-input
-            :show-input-controls="false"
-            input-size="mini"
-            style="flex: 1; margin-right: 10px;"
-          ></el-slider>
+          <el-slider v-model="localElement.zIndex" :min="0" :max="100" @change="updateElement" show-input
+            :show-input-controls="false" input-size="mini" style="flex: 1; margin-right: 10px;"></el-slider>
           <div class="layer-buttons">
-            <el-button 
-              size="mini" 
-              @click="moveToTop"
-              title="置于顶层"
-              icon="el-icon-top"
-            ></el-button>
-            <el-button 
-              size="mini" 
-              @click="moveUp"
-              title="上移一层"
-              icon="el-icon-arrow-up"
-            ></el-button>
-            <el-button 
-              size="mini" 
-              @click="moveDown"
-              title="下移一层"
-              icon="el-icon-arrow-down"
-            ></el-button>
-            <el-button 
-              size="mini" 
-              @click="moveToBottom"
-              title="置于底层"
-              icon="el-icon-bottom"
-            ></el-button>
+            <el-button size="mini" @click="moveToTop" title="置于顶层" icon="el-icon-top"></el-button>
+            <el-button size="mini" @click="moveUp" title="上移一层" icon="el-icon-arrow-up"></el-button>
+            <el-button size="mini" @click="moveDown" title="下移一层" icon="el-icon-arrow-down"></el-button>
+            <el-button size="mini" @click="moveToBottom" title="置于底层" icon="el-icon-bottom"></el-button>
           </div>
         </div>
       </el-form-item>
-      
+
       <!-- 图片管理 -->
       <el-form-item label="图片管理">
         <div class="image-list">
-          <div 
-            v-for="(image, index) in localElement.images" 
-            :key="index"
-            class="image-item"
-          >
+          <div v-for="(image, index) in localElement.images" :key="index" class="image-item">
             <img :src="image.url" class="image-thumbnail" />
             <div class="image-info">
               <span class="image-name">{{ image.name }}</span>
-              <el-button 
-                type="text" 
-                size="mini" 
-                @click="removeImage(index)"
-                style="color: #f56c6c;"
-              >
+              <el-button type="text" size="mini" @click="removeImage(index)" style="color: #f56c6c;">
                 删除
               </el-button>
             </div>
@@ -161,19 +83,11 @@
         </div>
         <el-button size="small" @click="addImages">添加图片</el-button>
       </el-form-item>
-      
+
       <el-form-item label="切换间隔" v-if="localElement.images && localElement.images.length > 1">
         <div class="slider-item">
-          <el-slider
-            v-model="localElement.interval"
-            :min="500"
-            :max="60000"
-            :step="500"
-            @change="updateElement"
-            show-input
-            :show-input-controls="false"
-            input-size="mini"
-          ></el-slider>
+          <el-slider v-model="localElement.interval" :min="500" :max="60000" :step="500" @change="updateElement"
+            show-input :show-input-controls="false" input-size="mini"></el-slider>
           <span class="unit">毫秒</span>
         </div>
       </el-form-item>
@@ -248,7 +162,7 @@ export default {
         input.type = 'file'
         input.accept = accept
         input.multiple = multiple
-        
+
         input.onchange = (event) => {
           const files = Array.from(event.target.files)
           const filePromises = files.map(file => {
@@ -265,10 +179,10 @@ export default {
               reader.readAsDataURL(file)
             })
           })
-          
+
           Promise.all(filePromises).then(resolve)
         }
-        
+
         input.oncancel = () => resolve(null)
         input.click()
       })
@@ -299,7 +213,8 @@ export default {
   margin-bottom: 5px;
 }
 
-.opacity-value, .unit {
+.opacity-value,
+.unit {
   margin-left: 10px;
   color: #666;
   font-size: 12px;
