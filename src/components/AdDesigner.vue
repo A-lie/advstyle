@@ -1,33 +1,23 @@
 <template>
   <div class="ad-designer">
-    <el-container style="height: 100vh;">
+    <el-container>
       <!-- 左侧组件库 -->
-      <el-aside width="250px" class="component-library">
+      <el-aside width="215px" class="component-library">
         <div class="library-header">
           <h3>组件库</h3>
         </div>
-        
+
         <!-- 屏幕尺寸设置 -->
         <div class="screen-size-setting">
           <h4>屏幕尺寸</h4>
           <el-form size="small">
             <el-form-item label="宽度">
-              <el-input-number 
-                v-model="canvasWidth" 
-                :min="100" 
-                :max="4000"
-                @change="updateCanvasSize"
-                size="small"
-              ></el-input-number>
+              <el-input-number v-model="canvasWidth" :min="100" :max="4000" @change="updateCanvasSize"
+                size="small"></el-input-number>
             </el-form-item>
             <el-form-item label="高度">
-              <el-input-number 
-                v-model="canvasHeight" 
-                :min="100" 
-                :max="4000"
-                @change="updateCanvasSize"
-                size="small"
-              ></el-input-number>
+              <el-input-number v-model="canvasHeight" :min="100" :max="4000" @change="updateCanvasSize"
+                size="small"></el-input-number>
             </el-form-item>
           </el-form>
         </div>
@@ -36,35 +26,19 @@
         <div class="component-list">
           <h4>拖拽组件</h4>
           <div class="component-items">
-            <div 
-              class="component-item" 
-              draggable="true"
-              @dragstart="handleDragStart($event, 'container')"
-            >
+            <div class="component-item" draggable="true" @dragstart="handleDragStart($event, 'container')">
               <i class="el-icon-s-grid"></i>
               <span>容器</span>
             </div>
-            <div 
-              class="component-item" 
-              draggable="true"
-              @dragstart="handleDragStart($event, 'image')"
-            >
+            <div class="component-item" draggable="true" @dragstart="handleDragStart($event, 'image')">
               <i class="el-icon-picture"></i>
               <span>图片</span>
             </div>
-            <div 
-              class="component-item" 
-              draggable="true"
-              @dragstart="handleDragStart($event, 'video')"
-            >
+            <div class="component-item" draggable="true" @dragstart="handleDragStart($event, 'video')">
               <i class="el-icon-video-camera"></i>
               <span>视频</span>
             </div>
-            <div 
-              class="component-item" 
-              draggable="true"
-              @dragstart="handleDragStart($event, 'text')"
-            >
+            <div class="component-item" draggable="true" @dragstart="handleDragStart($event, 'text')">
               <i class="el-icon-edit"></i>
               <span>文字</span>
             </div>
@@ -75,13 +49,8 @@
         <div class="element-list-panel" v-if="elements.length > 0">
           <h4>元素列表</h4>
           <div class="element-list">
-            <div 
-              v-for="element in sortedElements" 
-              :key="element.id"
-              class="element-item"
-              :class="{ active: selectedElement && selectedElement.id === element.id }"
-              @click="selectElement(element)"
-            >
+            <div v-for="element in sortedElements" :key="element.id" class="element-item"
+              :class="{ active: selectedElement && selectedElement.id === element.id }" @click="selectElement(element)">
               <div class="element-info">
                 <i :class="getElementIcon(element.type)"></i>
                 <span class="element-name">{{ getElementName(element) }}</span>
@@ -97,12 +66,8 @@
         <div class="editor-header">
           <div class="editor-title">
             <h3>编辑区域</h3>
-            <el-input 
-              v-model="programName" 
-              placeholder="请输入节目名称" 
-              style="width: 300px; margin-left: 20px;"
-              size="small"
-            ></el-input>
+            <el-input v-model="programName" placeholder="请输入节目名称" style="width: 200px; margin-left: 20px;"
+              size="small"></el-input>
           </div>
           <div class="editor-actions">
             <el-button size="small" @click="saveDesign">保存设计</el-button>
@@ -111,26 +76,13 @@
             <el-button size="small" type="success" @click="deployToDevice">下发到设备</el-button>
           </div>
         </div>
-        
+
         <div class="canvas-container" ref="canvasContainer">
-          <div 
-            class="canvas"
-            ref="canvas"
-            :style="canvasStyle"
-            @drop="handleDrop"
-            @dragover="handleDragOver"
-            @click="selectCanvas"
-          >
-            <component
-              v-for="element in elements"
-              :key="element.id"
-              :is="getComponentName(element.type)"
-              :element="element"
-              :selected="selectedElement && selectedElement.id === element.id"
-              @select="selectElement"
-              @update="updateElement"
-              @delete="deleteElement"
-            />
+          <div class="canvas" ref="canvas" :style="canvasStyle" @drop="handleDrop" @dragover="handleDragOver"
+            @click="selectCanvas">
+            <component v-for="element in elements" :key="element.id" :is="getComponentName(element.type)"
+              :element="element" :selected="selectedElement && selectedElement.id === element.id"
+              @select="selectElement" @update="updateElement" @delete="deleteElement" />
           </div>
         </div>
       </el-main>
@@ -140,24 +92,17 @@
         <div class="property-header">
           <h3>属性设置</h3>
         </div>
-        
+
         <div class="property-content" v-if="selectedElement">
-          <component
-            :is="getPropertyComponentName(selectedElement.type)"
-            :element="selectedElement"
-            @update="updateElement"
-            @layer-action="handleLayerAction"
-          />
+          <component :is="getPropertyComponentName(selectedElement.type)" :element="selectedElement"
+            @update="updateElement" @layer-action="handleLayerAction" />
         </div>
-        
+
         <div class="property-content" v-else-if="canvasSelected">
-          <canvas-properties 
-            :canvas-width="canvasWidth"
-            :canvas-height="canvasHeight"
-            @update="updateCanvasProperties"
-          />
+          <canvas-properties :canvas-width="canvasWidth" :canvas-height="canvasHeight"
+            @update="updateCanvasProperties" />
         </div>
-        
+
         <div class="property-content" v-else>
           <p class="no-selection">请选择一个元素来编辑属性</p>
         </div>
@@ -173,17 +118,9 @@
         </p>
       </div>
       <div class="preview-container">
-        <div 
-          class="preview-canvas"
-          :style="previewCanvasStyle"
-        >
-          <component
-            v-for="element in elements"
-            :key="'preview-' + element.id"
-            :is="getComponentName(element.type)"
-            :element="element"
-            :preview="true"
-          />
+        <div class="preview-canvas" :style="previewCanvasStyle">
+          <component v-for="element in elements" :key="'preview-' + element.id" :is="getComponentName(element.type)"
+            :element="element" :preview="true" />
         </div>
       </div>
     </el-dialog>
@@ -210,30 +147,19 @@
           <p>元素数量：{{ elements.length }}</p>
           <p>保存时间：{{ new Date().toLocaleString() }}</p>
         </div>
-        
+
         <div class="json-container">
           <div class="json-header">
             <span><strong>JSON 配置数据：</strong></span>
-            <el-button 
-              type="primary" 
-              size="mini" 
-              @click="copyJsonData"
-              icon="el-icon-document-copy"
-            >
+            <el-button type="primary" size="mini" @click="copyJsonData" icon="el-icon-document-copy">
               复制 JSON
             </el-button>
           </div>
-          <el-input
-            type="textarea"
-            v-model="designJsonData"
-            :rows="15"
-            readonly
-            class="json-textarea"
-            placeholder="JSON数据将在这里显示..."
-          ></el-input>
+          <el-input type="textarea" v-model="designJsonData" :rows="15" readonly class="json-textarea"
+            placeholder="JSON数据将在这里显示..."></el-input>
         </div>
       </div>
-      
+
       <div slot="footer">
         <el-button @click="saveVisible = false">关闭</el-button>
         <el-button type="primary" @click="downloadJson">下载 JSON 文件</el-button>
@@ -310,14 +236,14 @@ export default {
     getCanvasScale() {
       const container = this.$refs.canvasContainer
       if (!container) return 'scale(1)'
-      
+
       const containerWidth = container.clientWidth - 40
       const containerHeight = container.clientHeight - 40
-      
+
       const scaleX = containerWidth / this.canvasWidth
       const scaleY = containerHeight / this.canvasHeight
       const scale = Math.min(scaleX, scaleY, 1)
-      
+
       return `scale(${scale})`
     },
     updateCanvasSize() {
@@ -339,22 +265,22 @@ export default {
     },
     async handleDrop(event) {
       event.preventDefault()
-      
+
       if (!this.draggedComponentType) return
-      
+
       const canvas = this.$refs.canvas
       const rect = canvas.getBoundingClientRect()
       const scale = this.getScaleFromTransform(canvas.style.transform)
-      
+
       const x = (event.clientX - rect.left) / scale
       const y = (event.clientY - rect.top) / scale
-      
+
       const element = await this.createElement(this.draggedComponentType, x, y)
       if (element) {
         this.elements.push(element)
         this.selectElement(element)
       }
-      
+
       this.draggedComponentType = null
     },
     getScaleFromTransform(transform) {
@@ -390,7 +316,7 @@ export default {
                 url: file.url,
                 name: file.name
               })),
-              displayMode: 'center', // center, stretch
+              displayMode: 'cover',
               interval: 3000, // 图片切换间隔(ms)
               currentImageIndex: 0
             }
@@ -400,13 +326,13 @@ export default {
           const videoFiles = await this.selectFiles('video/*', false)
           if (videoFiles && videoFiles.length > 0) {
             const file = videoFiles[0]
-            
+
             // 验证文件大小
             const maxSize = 100 * 1024 * 1024 // 100MB
             if (file.size > maxSize) {
               this.$message.warning('视频文件过大（' + (file.size / 1024 / 1024).toFixed(2) + 'MB），可能导致加载失败')
             }
-            
+
             // 格式兼容性提示（不阻止上传）
             const formatInfo = this.getVideoFormatInfo(file.type)
             if (formatInfo.warning) {
@@ -414,7 +340,7 @@ export default {
             } else if (formatInfo.info) {
               this.$message.info(formatInfo.info)
             }
-            
+
             return {
               ...baseElement,
               videoUrl: file.url,
@@ -447,10 +373,10 @@ export default {
         input.type = 'file'
         input.accept = accept
         input.multiple = multiple
-        
+
         input.onchange = (event) => {
           const files = Array.from(event.target.files)
-          
+
           // 对于视频文件，使用 Blob URL 而不是 Base64
           if (accept.includes('video')) {
             const fileData = files.map(file => {
@@ -484,7 +410,7 @@ export default {
             Promise.all(filePromises).then(resolve)
           }
         }
-        
+
         input.oncancel = () => resolve(null)
         input.click()
       })
@@ -548,13 +474,13 @@ export default {
           elementCount: this.elements.length
         }
       }
-      
+
       // 格式化JSON数据用于显示
       this.designJsonData = JSON.stringify(designData, null, 2)
-      
+
       // 显示保存对话框
       this.saveVisible = true
-      
+
       console.log('设计数据:', designData)
     },
     copyJsonData() {
@@ -580,7 +506,7 @@ export default {
       document.body.appendChild(textArea)
       textArea.focus()
       textArea.select()
-      
+
       try {
         const successful = document.execCommand('copy')
         if (successful) {
@@ -592,7 +518,7 @@ export default {
         console.error('复制失败:', err)
         this.$message.error('复制失败，请手动复制')
       }
-      
+
       document.body.removeChild(textArea)
     },
     downloadJson() {
@@ -625,20 +551,20 @@ export default {
         this.$message.error('请先输入节目名称')
         return
       }
-      
+
       // 验证是否有元素
       if (this.elements.length === 0) {
         this.$message.warning('请先添加一些元素再保存为节目')
         return
       }
-      
+
       try {
         // 导入 mockApi
         const { mockPlayListAPI } = await import('@/services/mockApi')
-        
+
         // 转换元素为区域列表
         const arealist = this.convertElementsToAreas()
-        
+
         // 构建节目对象
         const programData = {
           advertid: 'adv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
@@ -650,12 +576,12 @@ export default {
           repeat: 0,
           arealist: arealist
         }
-        
+
         // 保存节目
         await mockPlayListAPI.saveProgram(programData)
-        
+
         this.$message.success(`节目"${this.programName}"已保存，可在播放设置中关联使用`)
-        
+
         // 询问是否跳转到播放设置
         this.$confirm('节目已保存成功，是否跳转到播放设置页面创建播放任务？', '提示', {
           confirmButtonText: '立即跳转',
@@ -663,8 +589,8 @@ export default {
           type: 'success'
         }).then(() => {
           this.$router.push('/schedule')
-        }).catch(() => {})
-        
+        }).catch(() => { })
+
       } catch (error) {
         console.error('保存节目失败:', error)
         this.$message.error('保存节目失败，请重试')
@@ -701,7 +627,7 @@ export default {
     // 将元素转换为资源列表
     convertElementToResources(element) {
       const resources = []
-      
+
       switch (element.type) {
         case 'text':
           // 文本元素
@@ -723,7 +649,7 @@ export default {
             })
           })
           break
-          
+
         case 'image':
           // 图片元素
           const images = element.images || []
@@ -743,7 +669,7 @@ export default {
             })
           })
           break
-          
+
         case 'video':
           // 视频元素
           if (element.videoUrl) {
@@ -762,7 +688,7 @@ export default {
             })
           }
           break
-          
+
         case 'container':
           // 容器元素 - 作为背景色区域
           resources.push({
@@ -775,7 +701,7 @@ export default {
           })
           break
       }
-      
+
       return resources
     },
     // 获取文本显示方式
@@ -793,23 +719,23 @@ export default {
         this.$message.warning('请先添加一些元素再预览')
         return
       }
-      
+
       // 检查是否有滚动文本或轮播内容
-      const hasScrollText = this.elements.some(el => 
+      const hasScrollText = this.elements.some(el =>
         el.type === 'text' && el.textAlign === 'scroll'
       )
-      const hasMultipleImages = this.elements.some(el => 
+      const hasMultipleImages = this.elements.some(el =>
         el.type === 'image' && el.images && el.images.length > 1
       )
-      const hasMultipleTexts = this.elements.some(el => 
+      const hasMultipleTexts = this.elements.some(el =>
         el.type === 'text' && el.texts && el.texts.length > 1
       )
       const hasVideo = this.elements.some(el => el.type === 'video')
-      
+
       if (hasScrollText || hasMultipleImages || hasMultipleTexts || hasVideo) {
         this.$message.success('预览中可以看到动画效果：文字滚动、图片轮播、视频播放等')
       }
-      
+
       this.previewVisible = true
     },
     deployToDevice() {
@@ -820,7 +746,7 @@ export default {
         this.$message.error('请输入设备SN号')
         return
       }
-      
+
       const deployData = {
         canvas: {
           width: this.canvasWidth,
@@ -830,7 +756,7 @@ export default {
         deviceSN: this.deviceSN,
         timestamp: Date.now()
       }
-      
+
       // 这里应该调用API发送到设备
       console.log('下发数据:', deployData)
       this.$message.success(`已下发到设备 ${this.deviceSN}`)
@@ -839,12 +765,12 @@ export default {
     handleLayerAction(data) {
       const { action, elementId } = data
       const elementIndex = this.elements.findIndex(el => el.id === elementId)
-      
+
       if (elementIndex === -1) return
-      
+
       const element = this.elements[elementIndex]
       const allZIndexes = this.elements.map(el => el.zIndex).sort((a, b) => a - b)
-      
+
       switch (action) {
         case 'moveToTop':
           // 置于顶层：设置为最大zIndex + 1
@@ -852,7 +778,7 @@ export default {
           this.updateElement({ ...element, zIndex: maxZIndex + 1 })
           this.$message.success('已置于顶层')
           break
-          
+
         case 'moveUp':
           // 上移一层：找到比当前zIndex大的最小值，与其交换
           const currentZIndex = element.zIndex
@@ -869,7 +795,7 @@ export default {
             this.$message.info('已经是最顶层')
           }
           break
-          
+
         case 'moveDown':
           // 下移一层：找到比当前zIndex小的最大值，与其交换
           const currentZIndex2 = element.zIndex
@@ -886,7 +812,7 @@ export default {
             this.$message.info('已经是最底层')
           }
           break
-          
+
         case 'moveToBottom':
           // 置于底层：设置为最小zIndex - 1，但不小于0
           const minZIndex = Math.min(...allZIndexes)
@@ -944,18 +870,18 @@ export default {
           warning: '已加载 MKV 视频，浏览器不支持，请转换为 MP4 或 WebM'
         }
       }
-      
+
       if (mimeType && formatMap[mimeType]) {
         return formatMap[mimeType]
       }
-      
+
       // 未知格式
       if (mimeType && mimeType.startsWith('video/')) {
         return {
           warning: '检测到视频格式: ' + mimeType + '，如果无法播放，请转换为 MP4(H.264) 格式'
         }
       }
-      
+
       return {
         warning: '无法识别视频格式，推荐使用 MP4(H.264)、WebM(VP9) 或 OGG 格式'
       }
@@ -975,9 +901,9 @@ export default {
         console.error('加载设计数据失败:', e)
       }
     }
-    
+
     this.updateCanvasSize()
-    
+
     // 监听窗口大小变化
     window.addEventListener('resize', this.updateCanvasScale)
   },
@@ -989,7 +915,7 @@ export default {
 
 <style scoped>
 .ad-designer {
-  height: 100vh;
+  height: calc(100% - 60px);
   background: #f5f5f5;
 }
 
@@ -1130,6 +1056,8 @@ export default {
 }
 
 .editor-main {
+  position: relative;
+  top: 8.5vh;
   background: #f0f0f0;
   padding: 20px;
   overflow: hidden;
@@ -1139,6 +1067,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 20px;
 }
 

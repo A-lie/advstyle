@@ -1,22 +1,16 @@
 <template>
   <div id="app">
-    <el-header style="background: #409eff; color: white; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;">
+    <el-header class="head">
       <h2 style="margin: 0;">广告设计系统</h2>
-      <el-menu
-        mode="horizontal"
-        background-color="#409eff"
-        text-color="white"
-        active-text-color="white"
-        router
-        style="border: none;"
-      >
+      <el-menu mode="horizontal" background-color="#409eff" text-color="white" active-text-color="white" router
+        style="border: none;">
         <el-menu-item index="/">首页</el-menu-item>
         <el-menu-item index="/designer">广告设计器</el-menu-item>
         <el-menu-item index="/schedule">播放设置</el-menu-item>
         <el-menu-item index="/viewer">JSON预览</el-menu-item>
       </el-menu>
     </el-header>
-    <router-view style="height: calc(100vh - 60px);"/>
+    <router-view style="height: calc(100vh - 60px);" />
   </div>
 </template>
 
@@ -38,6 +32,19 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;
+}
+
+.head {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #409eff;
+  color: white;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 body {

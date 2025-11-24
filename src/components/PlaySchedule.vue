@@ -1,6 +1,6 @@
 <template>
   <div class="play-schedule">
-    <el-container style="height: 100%;">
+    <el-container>
       <el-main>
         <!-- 顶部操作栏 -->
         <div class="toolbar">
