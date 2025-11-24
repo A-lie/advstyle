@@ -302,15 +302,6 @@ export default {
 </script>
 
 <style scoped>
-.image-properties {
-  padding: 16px;
-  background-color: #f8f9fa;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  height: 100%;
-  overflow-y: auto;
-}
-
 .panel-title {
   margin: 0 0 20px 0;
   color: #303133;
@@ -368,7 +359,7 @@ export default {
 }
 
 .compact-input {
-  width: 100px !important;
+  width: 65px !important;
 }
 
 ::v-deep .el-input-group__append {

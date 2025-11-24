@@ -1,8 +1,8 @@
 <template>
   <div class="ad-designer">
-    <el-container>
+    <el-container style="height: 100%;">
       <!-- 左侧组件库 -->
-      <el-aside width="215px" class="component-library">
+      <el-card class="box-card" style="width: 520px;">
         <div class="library-header">
           <h3>组件库</h3>
         </div>
@@ -59,40 +59,39 @@
             </div>
           </div>
         </div>
-      </el-aside>
+      </el-card>
+
 
       <!-- 中间编辑区域 -->
-      <el-main class="editor-main">
-        <div class="editor-header">
-          <div class="editor-title">
-            <h3>编辑区域</h3>
-            <el-input v-model="programName" placeholder="请输入节目名称" style="width: 200px; margin-left: 20px;"
-              size="small"></el-input>
+      <el-card class="box-card">
+        <el-main class="editor-main">
+          <div class="editor-header">
+            <div class="editor-title">
+              <h3>编辑区域</h3>
+              <el-input v-model="programName" placeholder="请输入节目名称" style="width: 160px; margin-left: 20px;"
+                size="small"></el-input>
+            </div>
+            <div class="editor-actions">
+              <el-button size="small" @click="saveDesign">保存设计</el-button>
+              <el-button size="small" type="warning" @click="saveAsProgram">保存为节目</el-button>
+              <el-button size="small" type="primary" @click="previewDesign">预览</el-button>
+              <el-button size="small" type="success" @click="deployToDevice">下发到设备</el-button>
+            </div>
           </div>
-          <div class="editor-actions">
-            <el-button size="small" @click="saveDesign">保存设计</el-button>
-            <el-button size="small" type="warning" @click="saveAsProgram">保存为节目</el-button>
-            <el-button size="small" type="primary" @click="previewDesign">预览</el-button>
-            <el-button size="small" type="success" @click="deployToDevice">下发到设备</el-button>
-          </div>
-        </div>
 
-        <div class="canvas-container" ref="canvasContainer">
-          <div class="canvas" ref="canvas" :style="canvasStyle" @drop="handleDrop" @dragover="handleDragOver"
-            @click="selectCanvas">
-            <component v-for="element in elements" :key="element.id" :is="getComponentName(element.type)"
-              :element="element" :selected="selectedElement && selectedElement.id === element.id"
-              @select="selectElement" @update="updateElement" @delete="deleteElement" />
+          <div class="canvas-container" ref="canvasContainer">
+            <div class="canvas" ref="canvas" :style="canvasStyle" @drop="handleDrop" @dragover="handleDragOver"
+              @click="selectCanvas">
+              <component v-for="element in elements" :key="element.id" :is="getComponentName(element.type)"
+                :element="element" :selected="selectedElement && selectedElement.id === element.id"
+                @select="selectElement" @update="updateElement" @delete="deleteElement" />
+            </div>
           </div>
-        </div>
-      </el-main>
+        </el-main>
+      </el-card>
 
       <!-- 右侧属性设置 -->
-      <el-aside width="400px" class="property-panel">
-        <div class="property-header">
-          <h3>属性设置</h3>
-        </div>
-
+      <el-card class="box-card" style="width: 850px;">
         <div class="property-content" v-if="selectedElement">
           <component :is="getPropertyComponentName(selectedElement.type)" :element="selectedElement"
             @update="updateElement" @layer-action="handleLayerAction" />
@@ -106,7 +105,7 @@
         <div class="property-content" v-else>
           <p class="no-selection">请选择一个元素来编辑属性</p>
         </div>
-      </el-aside>
+      </el-card>
     </el-container>
 
     <!-- 预览对话框 -->
@@ -197,7 +196,7 @@ export default {
   data() {
     return {
       canvasWidth: 1920,
-      canvasHeight: 1080,
+      canvasHeight: 700,
       elements: [],
       selectedElement: null,
       canvasSelected: false,
@@ -915,14 +914,13 @@ export default {
 
 <style scoped>
 .ad-designer {
-  height: calc(100% - 60px);
+  position: relative;
+  top: 60px;
   background: #f5f5f5;
 }
 
-.component-library {
-  background: white;
-  border-right: 1px solid #e6e6e6;
-  padding: 20px;
+.box-card {
+  margin: 10px;
   overflow-y: auto;
 }
 
@@ -1056,10 +1054,8 @@ export default {
 }
 
 .editor-main {
-  position: relative;
-  top: 60px;
-  background: #f0f0f0;
-  padding: 20px;
+  /* background: #f0f0f0; */
+  padding: 10px;
   overflow: hidden;
 }
 
@@ -1068,7 +1064,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
 }
 
 .editor-title {
@@ -1082,7 +1078,7 @@ export default {
 }
 
 .canvas-container {
-  height: calc(100vh - 140px);
+  height: calc(100vh - 200px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1095,18 +1091,6 @@ export default {
   position: relative;
   transform-origin: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.property-panel {
-  background: white;
-  border-left: 1px solid #e6e6e6;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.property-header h3 {
-  margin: 0 0 20px 0;
-  color: #333;
 }
 
 .no-selection {

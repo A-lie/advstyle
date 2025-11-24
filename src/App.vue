@@ -36,7 +36,7 @@ export default {
 
 .head {
   position: fixed;
- z-index: 10;
+  z-index: 10;
   width: 100%;
   background: #409eff;
   color: white;
