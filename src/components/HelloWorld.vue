@@ -9,7 +9,7 @@
         开始设计
       </el-button>
     </div>
-    
+
     <div class="features">
       <h2>功能特色</h2>
       <el-row :gutter="20">
@@ -36,7 +36,7 @@
         </el-col>
       </el-row>
     </div>
-    
+
     <div class="workflow">
       <h2>设计流程</h2>
       <el-steps :active="4" align-center>
@@ -53,7 +53,7 @@
 <script>
 export default {
   name: 'HelloWorld',
-  data () {
+  data() {
     return {
       msg: '广告设计系统'
     }
@@ -68,6 +68,8 @@ export default {
 
 <style scoped>
 .hello {
+  position: relative;
+  top: 60px;
   padding: 40px 20px;
   max-width: 1200px;
   margin: 0 auto;

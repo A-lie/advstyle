@@ -465,6 +465,8 @@ export default {
 
 <style scoped>
 .play-schedule {
+  position: relative;
+  top: 60px;
   height: 100%;
   background: #f5f5f5;
 }
