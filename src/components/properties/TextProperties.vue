@@ -382,7 +382,7 @@ export default {
 
 .form-section {
   margin-bottom: 24px;
-  padding: 16px;
+  padding: 10px;
   background-color: white;
   border-radius: 6px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
