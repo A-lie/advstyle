@@ -210,26 +210,25 @@ export default {
       programName: '' // 节目名称
     }
   },
-  computed: {
-    canvasStyle() {
-      return {
-        width: this.canvasWidth + 'px',
-        height: this.canvasHeight + 'px',
-        transform: this.getCanvasScale()
+  mounted() {
+    // 加载保存的设计
+    const savedDesign = localStorage.getItem('adDesign')
+    if (savedDesign) {
+      try {
+        const designData = JSON.parse(savedDesign)
+        this.canvasWidth = designData.canvas.width
+        this.canvasHeight = designData.canvas.height
+        this.elements = designData.elements || []
+        this.elementIdCounter = Math.max(...this.elements.map(el => el.id), 0) + 1
+      } catch (e) {
+        console.error('加载设计数据失败:', e)
       }
-    },
-    previewCanvasStyle() {
-      return {
-        width: this.canvasWidth + 'px',
-        height: this.canvasHeight + 'px',
-        transform: 'scale(0.8)',
-        transformOrigin: 'top left'
-      }
-    },
-    sortedElements() {
-      // 按zIndex从大到小排序，显示层级关系
-      return [...this.elements].sort((a, b) => b.zIndex - a.zIndex)
     }
+
+    this.updateCanvasSize()
+
+    // 监听窗口大小变化
+    window.addEventListener('resize', this.updateCanvasScale)
   },
   methods: {
     getCanvasScale() {
@@ -460,6 +459,7 @@ export default {
       }
       return componentMap[type] || 'ContainerProperties'
     },
+    // 保存设计
     saveDesign() {
       const designData = {
         canvas: {
@@ -713,6 +713,7 @@ export default {
       }
       return modeMap[textAlign] || 0
     },
+    // 预览
     previewDesign() {
       if (this.elements.length === 0) {
         this.$message.warning('请先添加一些元素再预览')
@@ -737,9 +738,11 @@ export default {
 
       this.previewVisible = true
     },
+    // 下发到设备
     deployToDevice() {
       this.deployVisible = true
     },
+    // 设备下发确认按钮
     confirmDeploy() {
       if (!this.deviceSN.trim()) {
         this.$message.error('请输入设备SN号')
@@ -886,25 +889,26 @@ export default {
       }
     }
   },
-  mounted() {
-    // 加载保存的设计
-    const savedDesign = localStorage.getItem('adDesign')
-    if (savedDesign) {
-      try {
-        const designData = JSON.parse(savedDesign)
-        this.canvasWidth = designData.canvas.width
-        this.canvasHeight = designData.canvas.height
-        this.elements = designData.elements || []
-        this.elementIdCounter = Math.max(...this.elements.map(el => el.id), 0) + 1
-      } catch (e) {
-        console.error('加载设计数据失败:', e)
+  computed: {
+    canvasStyle() {
+      return {
+        width: this.canvasWidth + 'px',
+        height: this.canvasHeight + 'px',
+        transform: this.getCanvasScale()
       }
+    },
+    previewCanvasStyle() {
+      return {
+        width: this.canvasWidth + 'px',
+        height: this.canvasHeight + 'px',
+        transform: 'scale(0.8)',
+        transformOrigin: 'top left'
+      }
+    },
+    sortedElements() {
+      // 按zIndex从大到小排序，显示层级关系
+      return [...this.elements].sort((a, b) => b.zIndex - a.zIndex)
     }
-
-    this.updateCanvasSize()
-
-    // 监听窗口大小变化
-    window.addEventListener('resize', this.updateCanvasScale)
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.updateCanvasScale)
@@ -1054,7 +1058,6 @@ export default {
 }
 
 .editor-main {
-  /* background: #f0f0f0; */
   padding: 10px;
   overflow: hidden;
 }
@@ -1064,7 +1067,6 @@ export default {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  /* margin-bottom: 20px; */
 }
 
 .editor-title {
