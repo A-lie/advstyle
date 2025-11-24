@@ -1,7 +1,7 @@
 <template>
   <div class="image-properties">
     <h4 class="panel-title">图片属性</h4>
-    
+
     <el-form size="small" label-width="100px" class="image-properties-form">
       <!-- 位置控制 -->
       <div class="form-section">
@@ -11,39 +11,19 @@
         </div>
         <el-form-item label="X坐标" class="position-item">
           <div class="slider-input-group">
-            <el-slider 
-              v-model="localElement.x" 
-              :min="0" 
-              :max="getMaxX" 
-              :step="1" 
-              @change="updateElement"
-              class="compact-slider"
-            ></el-slider>
-            <el-input 
-              v-model.number="localElement.x" 
-              @change="updateElement"
-              size="mini" 
-              class="compact-input"
-            ></el-input>
+            <el-slider v-model="localElement.x" :min="0" :max="getMaxX" :step="1" @change="updateElement"
+              class="compact-slider"></el-slider>
+            <el-input v-model.number="localElement.x" @change="updateElement" size="mini"
+              class="compact-input"></el-input>
           </div>
         </el-form-item>
-        
+
         <el-form-item label="Y坐标" class="position-item">
           <div class="slider-input-group">
-            <el-slider 
-              v-model="localElement.y" 
-              :min="0" 
-              :max="getMaxY" 
-              :step="1" 
-              @change="updateElement"
-              class="compact-slider"
-            ></el-slider>
-            <el-input 
-              v-model.number="localElement.y" 
-              @change="updateElement"
-              size="mini" 
-              class="compact-input"
-            ></el-input>
+            <el-slider v-model="localElement.y" :min="0" :max="getMaxY" :step="1" @change="updateElement"
+              class="compact-slider"></el-slider>
+            <el-input v-model.number="localElement.y" @change="updateElement" size="mini"
+              class="compact-input"></el-input>
           </div>
         </el-form-item>
       </div>
@@ -56,39 +36,19 @@
         </div>
         <el-form-item label="宽度" class="size-item">
           <div class="slider-input-group">
-            <el-slider 
-              v-model="localElement.width" 
-              :min="50" 
-              :max="2000" 
-              :step="1" 
-              @change="updateElement"
-              class="compact-slider"
-            ></el-slider>
-            <el-input 
-              v-model.number="localElement.width" 
-              @change="updateElement"
-              size="mini" 
-              class="compact-input"
-            ></el-input>
+            <el-slider v-model="localElement.width" :min="50" :max="2000" :step="1" @change="updateElement"
+              class="compact-slider"></el-slider>
+            <el-input v-model.number="localElement.width" @change="updateElement" size="mini"
+              class="compact-input"></el-input>
           </div>
         </el-form-item>
-        
+
         <el-form-item label="高度" class="size-item">
           <div class="slider-input-group">
-            <el-slider 
-              v-model="localElement.height" 
-              :min="50" 
-              :max="2000" 
-              :step="1" 
-              @change="updateElement"
-              class="compact-slider"
-            ></el-slider>
-            <el-input 
-              v-model.number="localElement.height" 
-              @change="updateElement"
-              size="mini" 
-              class="compact-input"
-            ></el-input>
+            <el-slider v-model="localElement.height" :min="50" :max="2000" :step="1" @change="updateElement"
+              class="compact-slider"></el-slider>
+            <el-input v-model.number="localElement.height" @change="updateElement" size="mini"
+              class="compact-input"></el-input>
           </div>
         </el-form-item>
       </div>
@@ -99,14 +59,9 @@
           <i class="el-icon-picture"></i>
           <span>显示与样式</span>
         </div>
-        
+
         <el-form-item label="显示方式" class="display-item">
-          <el-select 
-            v-model="localElement.displayMode" 
-            @change="updateElement"
-            class="full-width-select"
-            size="mini"
-          >
+          <el-select v-model="localElement.displayMode" @change="updateElement" class="full-width-select" size="mini">
             <el-option label="覆盖" value="cover"></el-option>
             <el-option label="填充" value="fill"></el-option>
             <el-option label="缩放" value="scale-down"></el-option>
@@ -116,32 +71,17 @@
 
         <el-form-item label="背景色" class="color-item">
           <div class="color-control-wrapper">
-            <el-color-picker 
-              v-model="localElement.backgroundColor" 
-              @change="updateElement" 
-              show-alpha
-              size="mini"
-              class="compact-color-picker"
-            ></el-color-picker>
-            <el-input 
-              v-model="localElement.backgroundColor" 
-              @change="updateElement"
-              size="mini" 
-              placeholder="透明"
-              class="color-input"
-            ></el-input>
+            <el-color-picker v-model="localElement.backgroundColor" @change="updateElement" show-alpha size="mini"
+              class="compact-color-picker"></el-color-picker>
+            <el-input v-model="localElement.backgroundColor" @change="updateElement" size="mini" placeholder="透明"
+              class="color-input"></el-input>
           </div>
         </el-form-item>
 
         <el-form-item label="透明度" class="opacity-item">
           <div class="slider-input-group">
-            <el-slider 
-              v-model="localElement.opacity" 
-              :min="0" 
-              :max="255" 
-              @change="updateElement" 
-              class="compact-slider"
-            ></el-slider>
+            <el-slider v-model="localElement.opacity" :min="0" :max="255" @change="updateElement"
+              class="compact-slider"></el-slider>
             <!-- <el-input 
               v-model.number="localElement.opacity" 
               @change="updateElement"
@@ -149,7 +89,7 @@
               class="compact-input"
             >
               <template slot="append">%</template>
-            </el-input> -->
+</el-input> -->
           </div>
           <div class="percentage-display">
             {{ Math.round(localElement.opacity / 255 * 100) }}%
@@ -166,19 +106,10 @@
         <el-form-item label="层级" class="zindex-item">
           <div class="zindex-control-wrapper">
             <div class="slider-input-group">
-              <el-slider 
-                v-model="localElement.zIndex" 
-                :min="0" 
-                :max="100" 
-                @change="updateElement" 
-                class="compact-slider"
-              ></el-slider>
-              <el-input 
-                v-model.number="localElement.zIndex" 
-                @change="updateElement"
-                size="mini" 
-                class="compact-input"
-              ></el-input>
+              <el-slider v-model="localElement.zIndex" :min="0" :max="100" @change="updateElement"
+                class="compact-slider"></el-slider>
+              <el-input v-model.number="localElement.zIndex" @change="updateElement" size="mini"
+                class="compact-input"></el-input>
             </div>
             <div class="layer-buttons">
               <el-tooltip effect="dark" content="置于顶层" placement="top">
@@ -219,22 +150,12 @@
               <p>暂无图片</p>
             </div>
             <div v-else class="image-list">
-              <div 
-                v-for="(image, index) in localElement.images" 
-                :key="index" 
-                class="image-item"
-                :class="{ 'active-image': index === currentImageIndex }"
-                @click="setCurrentImage(index)"
-              >
+              <div v-for="(image, index) in localElement.images" :key="index" class="image-item"
+                :class="{ 'active-image': index === currentImageIndex }" @click="setCurrentImage(index)">
                 <div class="image-thumbnail-wrapper">
                   <img :src="image.url" class="image-thumbnail" />
                   <div class="image-overlay">
-                    <el-button 
-                      type="text" 
-                      size="mini" 
-                      @click.stop="removeImage(index)" 
-                      class="image-remove-btn"
-                    >
+                    <el-button type="text" size="mini" @click.stop="removeImage(index)" class="image-remove-btn">
                       <i class="el-icon-delete"></i>
                     </el-button>
                   </div>
@@ -245,37 +166,17 @@
                 </div>
               </div>
             </div>
-            <el-button 
-              size="small" 
-              @click="addImages" 
-              class="add-image-btn"
-              icon="el-icon-plus"
-            >
+            <el-button size="small" @click="addImages" class="add-image-btn" icon="el-icon-plus">
               添加图片
             </el-button>
           </div>
         </el-form-item>
 
-        <el-form-item 
-          label="切换间隔" 
-          v-if="localElement.images && localElement.images.length > 1"
-          class="interval-item"
-        >
+        <el-form-item label="切换间隔" v-if="localElement.images && localElement.images.length > 1" class="interval-item">
           <div class="slider-input-group">
-            <el-slider 
-              v-model="localElement.interval" 
-              :min="500" 
-              :max="60000" 
-              :step="500" 
-              @change="updateElement"
-              class="compact-slider"
-            ></el-slider>
-            <el-input 
-              v-model.number="localElement.interval" 
-              @change="updateElement"
-              size="mini" 
-              class="compact-input"
-            >
+            <el-slider v-model="localElement.interval" :min="500" :max="60000" :step="500" @change="updateElement"
+              class="compact-slider"></el-slider>
+            <el-input v-model.number="localElement.interval" @change="updateElement" size="mini" class="compact-input">
               <template slot="append">ms</template>
             </el-input>
           </div>
@@ -467,7 +368,11 @@ export default {
 }
 
 .compact-input {
-  width: 80px !important;
+  width: 100px !important;
+}
+
+::v-deep .el-input-group__append {
+  padding: 0 10px;
 }
 
 ::v-deep .compact-input .el-input__inner {
@@ -562,7 +467,8 @@ export default {
   transition: all 0.3s;
 }
 
-.image-item:hover, .image-item.active-image {
+.image-item:hover,
+.image-item.active-image {
   border-color: #409EFF;
   box-shadow: 0 2px 6px rgba(64, 158, 255, 0.2);
 }
@@ -644,21 +550,21 @@ export default {
   .image-list {
     grid-template-columns: 1fr;
   }
-  
+
   .layer-buttons {
     flex-wrap: wrap;
   }
-  
+
   .layer-btn {
     flex: 0 0 48%;
     margin-bottom: 4px;
   }
-  
+
   .slider-input-group {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .compact-input {
     width: 100% !important;
   }

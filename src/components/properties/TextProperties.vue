@@ -134,7 +134,7 @@
             <el-slider v-model="localElement.fontSize" :min="12" :max="200" @change="updateElement"
               class="compact-slider"></el-slider>
             <el-input v-model.number="localElement.fontSize" @change="updateElement" size="mini" class="compact-input">
-              <!-- <template slot="append">px</template> -->
+              <template slot="append">px</template>
             </el-input>
           </div>
         </el-form-item>
@@ -224,12 +224,9 @@
           <div class="slider-input-group">
             <el-slider v-model="localElement.interval" :min="500" :max="60000" :step="500" @change="updateElement"
               class="compact-slider"></el-slider>
-            <el-input-group>
-              <el-input v-model.number="localElement.interval" @change="updateElement" size="mini"
-                class="compact-input">
-              </el-input>
-              <el-button slot="append" size="mini" style="padding: 7px;">ms</el-button>
-            </el-input-group>
+            <el-input v-model.number="localElement.interval" @change="updateElement" size="mini" class="compact-input">
+              <template slot="append">ms</template>
+            </el-input>
           </div>
           <div class="interval-display">
             {{ (localElement.interval / 1000).toFixed(1) }}秒
@@ -436,7 +433,11 @@ export default {
 }
 
 .compact-input {
-  width: 80px !important;
+  width: 100px !important;
+}
+
+::v-deep .el-input-group__append {
+  padding: 0 10px;
 }
 
 ::v-deep .compact-input .el-input__inner {
