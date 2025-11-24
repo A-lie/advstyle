@@ -196,7 +196,7 @@ export default {
   data() {
     return {
       canvasWidth: 1920,
-      canvasHeight: 700,
+      canvasHeight: 750,
       elements: [],
       selectedElement: null,
       canvasSelected: false,
@@ -1078,7 +1078,7 @@ export default {
 }
 
 .canvas-container {
-  height: calc(100vh - 200px);
+  height: calc(100vh - 150px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1100,11 +1100,11 @@ export default {
 }
 
 .preview-container {
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  background: #f0f0f0;
+  align-items: center; */
+  height: 560px;
+  overflow: auto;
 }
 
 .preview-header {
