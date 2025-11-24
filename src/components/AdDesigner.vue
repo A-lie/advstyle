@@ -88,7 +88,7 @@
       </el-main>
 
       <!-- 右侧属性设置 -->
-      <el-aside width="350px" class="property-panel">
+      <el-aside width="400px" class="property-panel">
         <div class="property-header">
           <h3>属性设置</h3>
         </div>
