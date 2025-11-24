@@ -1,45 +1,25 @@
 <template>
   <div class="canvas-properties">
     <h4>画布属性</h4>
-    
+
     <el-form size="small" label-width="70px">
       <el-form-item label="画布尺寸">
         <div class="slider-group">
           <div class="slider-item">
             <label>宽度</label>
-            <el-slider
-              v-model="localCanvasWidth"
-              :min="100"
-              :max="4000"
-              :step="1"
-              @change="updateCanvas"
-              show-input
-              :show-input-controls="false"
-              input-size="mini"
-            ></el-slider>
+            <el-slider v-model="localCanvasWidth" :min="100" :max="4000" :step="1" @change="updateCanvas" show-input
+              :show-input-controls="false" input-size="mini"></el-slider>
           </div>
           <div class="slider-item">
             <label>高度</label>
-            <el-slider
-              v-model="localCanvasHeight"
-              :min="100"
-              :max="4000"
-              :step="1"
-              @change="updateCanvas"
-              show-input
-              :show-input-controls="false"
-              input-size="mini"
-            ></el-slider>
+            <el-slider v-model="localCanvasHeight" :min="100" :max="4000" :step="1" @change="updateCanvas" show-input
+              :show-input-controls="false" input-size="mini"></el-slider>
           </div>
         </div>
       </el-form-item>
-      
+
       <el-form-item label="预设尺寸">
-        <el-select 
-          v-model="selectedPreset" 
-          @change="applyPreset"
-          placeholder="选择预设尺寸"
-        >
+        <el-select v-model="selectedPreset" @change="applyPreset" placeholder="选择预设尺寸">
           <el-option label="1920x1080 (Full HD)" value="1920x1080"></el-option>
           <el-option label="1366x768 (HD)" value="1366x768"></el-option>
           <el-option label="1280x720 (HD Ready)" value="1280x720"></el-option>
@@ -50,11 +30,11 @@
           <el-option label="720x1280 (竖屏 HD Ready)" value="720x1280"></el-option>
         </el-select>
       </el-form-item>
-      
+
       <el-form-item label="比例">
         <span class="ratio-info">{{ aspectRatio }}</span>
       </el-form-item>
-      
+
       <el-form-item label="操作">
         <el-button size="small" @click="resetCanvas">重置画布</el-button>
       </el-form-item>
@@ -83,6 +63,7 @@ export default {
     }
   },
   computed: {
+    // 计算并返回画布的宽高比
     aspectRatio() {
       const gcd = this.getGCD(this.localCanvasWidth, this.localCanvasHeight)
       const ratioW = this.localCanvasWidth / gcd
