@@ -94,7 +94,7 @@ export default {
         opacity: this.element.opacity / 255,
         zIndex: this.element.zIndex,
         border: this.selected && !this.preview ? '2px solid #409eff' : 'none',
-        overflow: 'hidden'
+        overflow: this.selected && !this.preview ? 'visible' : 'hidden'
       }
     },
     videoStyle() {
