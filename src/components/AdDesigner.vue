@@ -1057,7 +1057,7 @@ export default {
 
 .editor-main {
   position: relative;
-  top: 8.5vh;
+  top: 60px;
   background: #f0f0f0;
   padding: 20px;
   overflow: hidden;
