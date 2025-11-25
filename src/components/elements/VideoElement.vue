@@ -216,8 +216,8 @@ export default {
         const deltaX = event.clientX - this.startX
         const deltaY = event.clientY - this.startY
         
-        const newX = Math.max(0, this.startElementX + deltaX)
-        const newY = Math.max(0, this.startElementY + deltaY)
+        const newX = Math.max(0, Math.round(this.startElementX + deltaX))
+        const newY = Math.max(0, Math.round(this.startElementY + deltaY))
         
         this.$emit('update', {
           ...this.element,
@@ -283,10 +283,10 @@ export default {
       
       this.$emit('update', {
         ...this.element,
-        x: Math.max(0, newX),
-        y: Math.max(0, newY),
-        width: newWidth,
-        height: newHeight
+        x: Math.max(0, Math.round(newX)),
+        y: Math.max(0, Math.round(newY)),
+        width: Math.round(newWidth),
+        height: Math.round(newHeight)
       })
     },
     handleDelete() {

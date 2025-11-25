@@ -270,8 +270,8 @@ export default {
       const rect = canvas.getBoundingClientRect()
       const scale = this.getScaleFromTransform(canvas.style.transform)
 
-      const x = (event.clientX - rect.left) / scale
-      const y = (event.clientY - rect.top) / scale
+      const x = Math.round((event.clientX - rect.left) / scale)
+      const y = Math.round((event.clientY - rect.top) / scale)
 
       const element = await this.createElement(this.draggedComponentType, x, y)
       if (element) {
