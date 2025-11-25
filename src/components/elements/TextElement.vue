@@ -113,6 +113,8 @@ export default {
         fontSize: this.element.fontSize + 'px',
         color: this.element.fontColor,
         fontWeight: this.element.fontWeight ? 'bold' : 'normal',
+        fontStyle: this.element.fontItalic ? 'italic' : 'normal',
+        textDecoration: this.element.fontUnderline ? 'underline' : 'none',
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -137,6 +139,8 @@ export default {
         fontSize: this.element.fontSize + 'px',
         color: this.element.fontColor,
         fontWeight: this.element.fontWeight ? 'bold' : 'normal',
+        fontStyle: this.element.fontItalic ? 'italic' : 'normal',
+        textDecoration: this.element.fontUnderline ? 'underline' : 'none',
         textAlign: this.element.textAlign === 'scroll' ? 'left' : this.element.textAlign
       }
     },
