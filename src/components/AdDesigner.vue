@@ -68,7 +68,7 @@
           <div class="editor-header">
             <div class="editor-title">
               <h3>编辑区域</h3>
-              <el-input v-model="programName" placeholder="请输入节目名称" style="width: 160px; margin-left: 20px;"
+              <el-input v-model="programName" clearable placeholder="请输入节目名称" style="width: 160px; margin-left: 20px;"
                 size="small"></el-input>
             </div>
             <div class="editor-actions">
