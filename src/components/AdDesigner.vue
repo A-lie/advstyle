@@ -231,6 +231,12 @@ export default {
     window.addEventListener('resize', this.updateCanvasScale)
   },
   methods: {
+    /**
+     * 计算并返回画布的缩放比例
+     * 根据画布容器的尺寸和画布原始尺寸计算合适的缩放比例
+     * 确保画布在容器中完整显示且不超过原始大小
+     * @returns {string} 返回CSS的scale变换字符串，例如'scale(0.8)'
+     */
     getCanvasScale() {
       const container = this.$refs.canvasContainer
       if (!container) return 'scale(1)'
@@ -261,6 +267,7 @@ export default {
       event.preventDefault()
       event.dataTransfer.dropEffect = 'copy'
     },
+    // 处理拖放事件，在画布上创建新元素
     async handleDrop(event) {
       event.preventDefault()
 
@@ -286,6 +293,7 @@ export default {
       const match = transform.match(/scale\(([^)]+)\)/)
       return match ? parseFloat(match[1]) : 1
     },
+    //  创建并返回一个新的元素对象
     async createElement(type, x, y) {
       const baseElement = {
         id: this.elementIdCounter++,
@@ -305,6 +313,7 @@ export default {
             ...baseElement,
             backgroundColor: '#f0f0f0'
           }
+        // 选择图片文件创建图片元素，支持多图轮播
         case 'image':
           const imageFiles = await this.selectFiles('image/*', true)
           if (imageFiles && imageFiles.length > 0) {
@@ -320,6 +329,7 @@ export default {
             }
           }
           return null
+        // 选择视频文件创建视频元素，会验证文件大小和格式
         case 'video':
           const videoFiles = await this.selectFiles('video/*', false)
           if (videoFiles && videoFiles.length > 0) {
@@ -357,6 +367,8 @@ export default {
             fontSize: 24,
             fontColor: '#000000',
             fontWeight: false,
+            fontItalic: false,
+            fontUnderline: false,
             textAlign: 'left', // left, center, right, scroll
             scrollSpeed: 5, // 0-9
             interval: 3000 // 文本切换间隔(ms)
@@ -365,6 +377,7 @@ export default {
           return baseElement
       }
     },
+    //  选择文件并返回文件数据
     selectFiles(accept, multiple = false) {
       return new Promise((resolve) => {
         const input = document.createElement('input')
@@ -413,6 +426,7 @@ export default {
         input.click()
       })
     },
+    // 选择指定元素并更新选中状态
     selectElement(element) {
       this.selectedElement = element
       this.canvasSelected = false
@@ -427,6 +441,7 @@ export default {
         this.$set(this.elements, index, { ...this.elements[index], ...elementData })
       }
     },
+    // 删除组件
     deleteElement(elementId) {
       const index = this.elements.findIndex(el => el.id === elementId)
       if (index !== -1) {
@@ -833,6 +848,7 @@ export default {
       }
       return iconMap[type] || 'el-icon-s-grid'
     },
+    // 根据元素类型获取元素名称
     getElementName(element) {
       const typeNames = {
         container: '容器',
@@ -851,6 +867,7 @@ export default {
       const minZIndex = Math.min(...this.elements.map(el => el.zIndex))
       return element.zIndex === minZIndex
     },
+    // 获取视频格式的兼容性信息
     getVideoFormatInfo(mimeType) {
       const formatMap = {
         'video/mp4': {
@@ -910,6 +927,7 @@ export default {
       return [...this.elements].sort((a, b) => b.zIndex - a.zIndex)
     }
   },
+  //  在组件销毁前移除窗口的resize事件监听器，防止内存泄漏
   beforeDestroy() {
     window.removeEventListener('resize', this.updateCanvasScale)
   }
