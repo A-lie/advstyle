@@ -175,12 +175,12 @@
           <div class="slider-input-group">
             <el-slider v-model="localElement.scrollSpeed" :min="1" :max="9" :step="1" @change="updateElement"
               class="compact-slider" :marks="scrollSpeedMarks"></el-slider>
-            <el-input v-model.number="localElement.scrollSpeed" @change="updateElement" size="mini"
-              class="compact-input"></el-input>
+            <!-- <el-input v-model.number="localElement.scrollSpeed" @change="updateElement" size="mini"
+              class="compact-input"></el-input> -->
           </div>
-          <div class="speed-display">
+          <!-- <div class="speed-display">
             {{ getSpeedLabel(localElement.scrollSpeed) }}
-          </div>
+          </div> -->
         </el-form-item>
       </div>
 
