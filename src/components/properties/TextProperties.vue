@@ -185,7 +185,7 @@
       </div>
 
       <!-- 文本内容管理 -->
-      <div class="form-section">
+      <!-- <div class="form-section">
         <div class="section-header">
           <i class="el-icon-document"></i>
           <span>文本内容</span>
@@ -232,7 +232,7 @@
             {{ (localElement.interval / 1000).toFixed(1) }}秒
           </div>
         </el-form-item>
-      </div>
+      </div> -->
     </el-form>
   </div>
 </template>
@@ -337,31 +337,31 @@ export default {
       if (speed <= 6) return '中速'
       return '快速'
     },
-    addText() {
-      if (!this.localElement.texts) {
-        this.localElement.texts = []
-      }
-      this.localElement.texts.push('新文本内容')
-      this.updateElement()
-    },
-    removeText(index) {
-      if (this.localElement.texts.length > 1) {
-        this.$confirm('确定要删除这个文本吗？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.localElement.texts.splice(index, 1)
-          this.updateElement()
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        }).catch(() => {
-          // 用户取消删除
-        })
-      }
-    }
+    // addText() {
+    //   if (!this.localElement.texts) {
+    //     this.localElement.texts = []
+    //   }
+    //   this.localElement.texts.push('新文本内容')
+    //   this.updateElement()
+    // },
+    // removeText(index) {
+    //   if (this.localElement.texts.length > 1) {
+    //     this.$confirm('确定要删除这个文本吗？', '提示', {
+    //       confirmButtonText: '确定',
+    //       cancelButtonText: '取消',
+    //       type: 'warning'
+    //     }).then(() => {
+    //       this.localElement.texts.splice(index, 1)
+    //       this.updateElement()
+    //       this.$message({
+    //         type: 'success',
+    //         message: '删除成功!'
+    //       })
+    //     }).catch(() => {
+    //       // 用户取消删除
+    //     })
+    //   }
+    // }
   }
 }
 </script>
@@ -380,15 +380,15 @@ export default {
   margin-top: 10px;
 }
 
-.form-section {
+/* .form-section {
   margin-bottom: 24px;
   padding: 10px;
   background-color: white;
   border-radius: 6px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
+} */
 
-.section-header {
+/* .section-header {
   display: flex;
   align-items: center;
   margin-bottom: 16px;
@@ -400,7 +400,7 @@ export default {
 .section-header i {
   margin-right: 8px;
   color: #409EFF;
-}
+} */
 
 ::v-deep .el-form-item {
   margin-bottom: 18px;
