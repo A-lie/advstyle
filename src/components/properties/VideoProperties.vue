@@ -80,8 +80,8 @@
           <div class="slider-input-group">
             <el-slider v-model.number="localElement.opacity" :min="0" :max="255" @change="updateElement"
               class="compact-slider"></el-slider>
-            <el-input v-model.number="localElement.opacity" @change="handleInputChange('opacity', $event)" size="mini"
-              class="compact-input"></el-input>
+            <!-- <el-input v-model.number="localElement.opacity" @change="handleInputChange('opacity', $event)" size="mini"
+              class="compact-input"></el-input> -->
           </div>
           <div class="percentage-display">
             {{ Math.round((localElement.opacity || 255) / 255 * 100) }}%
@@ -862,6 +862,14 @@ export default {
   color: #909399;
   text-align: center;
   margin-top: 5px;
+}
+
+.compact-input {
+  width: 80px !important;
+}
+
+.slider-input-group>>>.el-input-group__append {
+  padding: 0 15px;
 }
 
 /* 响应式调整 */

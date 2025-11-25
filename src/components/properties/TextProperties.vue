@@ -424,19 +424,22 @@ export default {
 }
 
 .compact-input {
-  width: 65px !important;
+  width: 85px !important;
 }
 
-::v-deep .el-input-group__append {
+.slider-input-group >>> .el-input-group__append {
   padding: 0 10px;
 }
+.slider-input-group >>> .el-input__inner{
+   padding: 0 7px;
+}
 
-::v-deep .compact-input .el-input__inner {
+/* ::v-deep .compact-input .el-input__inner {
   padding: 0 8px;
   text-align: center;
   height: 28px;
   line-height: 28px;
-}
+} */
 
 .full-width-select {
   width: 100%;
