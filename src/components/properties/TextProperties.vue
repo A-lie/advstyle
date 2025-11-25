@@ -506,11 +506,11 @@ export default {
 }
 
 /* 文本内容管理 */
-.text-list-wrapper {
+/* .text-list-wrapper {
   width: 100%;
-}
+} */
 
-.empty-text-list {
+/* .empty-text-list {
   text-align: center;
   padding: 20px 0;
   color: #c0c4cc;
@@ -525,15 +525,15 @@ export default {
 .empty-text-list p {
   margin: 0;
   font-size: 12px;
-}
+} */
 
-.text-list {
+/* .text-list {
   margin-bottom: 12px;
   max-height: 300px;
   overflow-y: auto;
-}
+} */
 
-.text-item {
+/* .text-item {
   margin-bottom: 16px;
   padding: 12px;
   border: 1px solid #e4e7ed;
@@ -545,29 +545,29 @@ export default {
 .text-item.active-text {
   border-color: #409EFF;
   box-shadow: 0 2px 6px rgba(64, 158, 255, 0.1);
-}
+} */
 
-.text-content-wrapper {
+/* .text-content-wrapper {
   margin-bottom: 8px;
-}
+} */
 
-.text-content-input ::v-deep .el-textarea__inner {
+/* .text-content-input ::v-deep .el-textarea__inner {
   resize: none;
   font-size: 12px;
   line-height: 1.4;
-}
+} */
 
-.text-actions {
+/* .text-actions {
   text-align: right;
   margin-top: 8px;
-}
+} */
 
-.text-remove-btn {
+/* .text-remove-btn {
   color: #f56c6c !important;
   font-size: 12px;
-}
+} */
 
-.text-info {
+/* .text-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -575,9 +575,9 @@ export default {
   color: #909399;
   padding-top: 6px;
   border-top: 1px solid #f0f0f0;
-}
+} */
 
-.text-index {
+/* .text-index {
   font-weight: 500;
 }
 
@@ -585,19 +585,19 @@ export default {
   background-color: #f0f0f0;
   border-radius: 2px;
   padding: 1px 4px;
-}
+} */
 
-.add-text-btn {
+/* .add-text-btn {
   width: 100%;
   margin-top: 8px;
-}
+} */
 
-.interval-display {
+/* .interval-display {
   font-size: 12px;
   color: #909399;
   text-align: center;
   margin-top: 5px;
-}
+} */
 
 /* 响应式调整 */
 @media (max-width: 768px) {
