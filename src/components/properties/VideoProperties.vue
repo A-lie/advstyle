@@ -39,7 +39,7 @@
             <el-slider v-model.number="localElement.width" :min="50" :max="2000" :step="1" @change="updateElement"
               class="compact-slider"></el-slider>
             <el-input v-model.number="localElement.width" @change="handleInputChange('width', $event)" size="mini"
-              class="compact-input"></el-input>
+              class="compact-input"><template slot="append">px</template></el-input>
           </div>
         </el-form-item>
 
@@ -48,7 +48,7 @@
             <el-slider v-model.number="localElement.height" :min="50" :max="2000" :step="1" @change="updateElement"
               class="compact-slider"></el-slider>
             <el-input v-model.number="localElement.height" @change="handleInputChange('height', $event)" size="mini"
-              class="compact-input"></el-input>
+              class="compact-input"><template slot="append">px</template></el-input>
           </div>
         </el-form-item>
       </div>
@@ -764,6 +764,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 100%;
 }
 
 .video-name {
@@ -869,7 +870,11 @@ export default {
 }
 
 .slider-input-group>>>.el-input-group__append {
-  padding: 0 15px;
+  padding: 0 10px;
+}
+
+.slider-input-group>>>.el-input__inner {
+  padding: 0 10px;
 }
 
 /* 响应式调整 */

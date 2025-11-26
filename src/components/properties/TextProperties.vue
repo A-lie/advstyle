@@ -39,7 +39,7 @@
             <el-slider v-model="localElement.width" :min="50" :max="2000" :step="1" @change="updateElement"
               class="compact-slider"></el-slider>
             <el-input v-model.number="localElement.width" @change="updateElement" size="mini"
-              class="compact-input"></el-input>
+              class="compact-input"><template slot="append">px</template></el-input>
           </div>
         </el-form-item>
 
@@ -48,7 +48,7 @@
             <el-slider v-model="localElement.height" :min="30" :max="2000" :step="1" @change="updateElement"
               class="compact-slider"></el-slider>
             <el-input v-model.number="localElement.height" @change="updateElement" size="mini"
-              class="compact-input"></el-input>
+              class="compact-input"><template slot="append">px</template></el-input>
           </div>
         </el-form-item>
       </div>
@@ -191,14 +191,8 @@
           <span>文本内容</span>
         </div>
         <el-form-item label="文字内容" class="text-content-item">
-          <el-input 
-            v-model="localElement.texts[0]" 
-            type="textarea" 
-            :rows="3" 
-            @input="updateElement"
-            placeholder="请输入文本内容" 
-            class="text-content-input" 
-            resize="none">
+          <el-input v-model="localElement.texts[0]" type="textarea" :rows="3" @input="updateElement"
+            placeholder="请输入文本内容" class="text-content-input" resize="none">
           </el-input>
           <div class="text-info">
             <span class="text-length">{{ (localElement.texts[0] || '').length }} 字符</span>
@@ -374,11 +368,12 @@ export default {
   width: 85px !important;
 }
 
-.slider-input-group >>> .el-input-group__append {
+.slider-input-group>>>.el-input-group__append {
   padding: 0 10px;
 }
-.slider-input-group >>> .el-input__inner{
-   padding: 0 7px;
+
+.slider-input-group>>>.el-input__inner {
+  padding: 0 7px;
 }
 
 .full-width-select {

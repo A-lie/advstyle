@@ -39,7 +39,7 @@
             <el-slider v-model="localElement.width" :min="50" :max="2000" :step="1" @change="updateElement"
               class="compact-slider"></el-slider>
             <el-input v-model.number="localElement.width" @change="updateElement" size="mini"
-              class="compact-input"></el-input>
+              class="compact-input"><template slot="append">px</template></el-input>
           </div>
         </el-form-item>
 
@@ -48,7 +48,7 @@
             <el-slider v-model="localElement.height" :min="50" :max="2000" :step="1" @change="updateElement"
               class="compact-slider"></el-slider>
             <el-input v-model.number="localElement.height" @change="updateElement" size="mini"
-              class="compact-input"></el-input>
+              class="compact-input"><template slot="append">px</template></el-input>
           </div>
         </el-form-item>
       </div>
