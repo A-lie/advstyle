@@ -184,6 +184,28 @@
         </el-form-item>
       </div>
 
+      <!-- 文本内容 -->
+      <div class="form-section">
+        <div class="section-header">
+          <i class="el-icon-document"></i>
+          <span>文本内容</span>
+        </div>
+        <el-form-item label="文字内容" class="text-content-item">
+          <el-input 
+            v-model="localElement.texts[0]" 
+            type="textarea" 
+            :rows="3" 
+            @input="updateElement"
+            placeholder="请输入文本内容" 
+            class="text-content-input" 
+            resize="none">
+          </el-input>
+          <div class="text-info">
+            <span class="text-length">{{ (localElement.texts[0] || '').length }} 字符</span>
+          </div>
+        </el-form-item>
+      </div>
+
       <!-- 文本内容管理 -->
       <!-- <div class="form-section">
         <div class="section-header">
@@ -380,15 +402,15 @@ export default {
   margin-top: 10px;
 }
 
-/* .form-section {
+.form-section {
   margin-bottom: 24px;
   padding: 10px;
   background-color: white;
   border-radius: 6px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-} */
+}
 
-/* .section-header {
+.section-header {
   display: flex;
   align-items: center;
   margin-bottom: 16px;
@@ -400,7 +422,7 @@ export default {
 .section-header i {
   margin-right: 8px;
   color: #409EFF;
-} */
+}
 
 ::v-deep .el-form-item {
   margin-bottom: 18px;
@@ -506,86 +528,32 @@ export default {
 }
 
 /* 文本内容管理 */
-/* .text-list-wrapper {
-  width: 100%;
-} */
-
-/* .empty-text-list {
-  text-align: center;
-  padding: 20px 0;
-  color: #c0c4cc;
-}
-
-.empty-text-list i {
-  font-size: 40px;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.empty-text-list p {
-  margin: 0;
-  font-size: 12px;
-} */
-
-/* .text-list {
-  margin-bottom: 12px;
-  max-height: 300px;
-  overflow-y: auto;
-} */
-
-/* .text-item {
+.text-content-item {
   margin-bottom: 16px;
-  padding: 12px;
-  border: 1px solid #e4e7ed;
-  border-radius: 4px;
-  transition: all 0.3s;
 }
 
-.text-item:hover,
-.text-item.active-text {
-  border-color: #409EFF;
-  box-shadow: 0 2px 6px rgba(64, 158, 255, 0.1);
-} */
-
-/* .text-content-wrapper {
-  margin-bottom: 8px;
-} */
-
-/* .text-content-input ::v-deep .el-textarea__inner {
+.text-content-input ::v-deep .el-textarea__inner {
   resize: none;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.4;
-} */
+  padding: 8px 12px;
+}
 
-/* .text-actions {
-  text-align: right;
-  margin-top: 8px;
-} */
-
-/* .text-remove-btn {
-  color: #f56c6c !important;
-  font-size: 12px;
-} */
-
-/* .text-info {
+.text-info {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  font-size: 11px;
+  font-size: 12px;
   color: #909399;
-  padding-top: 6px;
-  border-top: 1px solid #f0f0f0;
-} */
-
-/* .text-index {
-  font-weight: 500;
+  margin-top: 6px;
 }
 
 .text-length {
   background-color: #f0f0f0;
   border-radius: 2px;
-  padding: 1px 4px;
-} */
+  padding: 2px 6px;
+  font-size: 11px;
+}
 
 /* .add-text-btn {
   width: 100%;
