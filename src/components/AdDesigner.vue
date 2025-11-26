@@ -73,8 +73,8 @@
             </div>
             <div class="editor-actions">
               <el-button size="small" @click="saveDesign">保存设计</el-button>
-              <el-button size="small" type="warning" @click="saveAsProgram">保存为节目</el-button>
               <el-button size="small" type="primary" @click="previewDesign">预览</el-button>
+              <el-button size="small" type="warning" @click="saveAsProgram">保存为节目</el-button>
               <el-button size="small" type="success" @click="deployToDevice">下发到设备</el-button>
             </div>
           </div>
@@ -465,6 +465,7 @@ export default {
       }
       return componentMap[type] || 'ContainerElement'
     },
+    // 根据元素类型获取对应的属性组件名称
     getPropertyComponentName(type) {
       const componentMap = {
         container: 'ContainerProperties',
@@ -488,15 +489,13 @@ export default {
           elementCount: this.elements.length
         }
       }
-
       // 格式化JSON数据用于显示
       this.designJsonData = JSON.stringify(designData, null, 2)
-
       // 显示保存对话框
       this.saveVisible = true
-
       console.log('设计数据:', designData)
     },
+    // 复制 JSON
     copyJsonData() {
       if (navigator.clipboard && window.isSecureContext) {
         // 使用现代的 Clipboard API
@@ -535,6 +534,7 @@ export default {
 
       document.body.removeChild(textArea)
     },
+    // 下载JSON文件
     downloadJson() {
       const blob = new Blob([this.designJsonData], { type: 'application/json' })
       const url = URL.createObjectURL(blob)
@@ -547,6 +547,7 @@ export default {
       URL.revokeObjectURL(url)
       this.$message.success('JSON 文件已下载')
     },
+    // JSON 配置数据保存到本地
     saveToLocalStorage() {
       try {
         const designData = JSON.parse(this.designJsonData)
@@ -779,12 +780,11 @@ export default {
       this.$message.success(`已下发到设备 ${this.deviceSN}`)
       this.deployVisible = false
     },
+    // 处理图层操作，包括上移、下移、置顶、置底等
     handleLayerAction(data) {
       const { action, elementId } = data
       const elementIndex = this.elements.findIndex(el => el.id === elementId)
-
       if (elementIndex === -1) return
-
       const element = this.elements[elementIndex]
       const allZIndexes = this.elements.map(el => el.zIndex).sort((a, b) => a - b)
 
@@ -839,6 +839,7 @@ export default {
           break
       }
     },
+    //  根据元素类型获取对应的图标类名
     getElementIcon(type) {
       const iconMap = {
         container: 'el-icon-s-grid',
@@ -859,10 +860,12 @@ export default {
       const baseName = typeNames[element.type] || '元素'
       return `${baseName} ${element.id}`
     },
+    // 检查指定元素是否为当前层级最高的元素（zIndex最大）
     isTopElement(element) {
       const maxZIndex = Math.max(...this.elements.map(el => el.zIndex))
       return element.zIndex === maxZIndex
     },
+    // 判断指定元素是否为最底层元素
     isBottomElement(element) {
       const minZIndex = Math.min(...this.elements.map(el => el.zIndex))
       return element.zIndex === minZIndex
@@ -1098,7 +1101,7 @@ export default {
 }
 
 .canvas-container {
-  height: calc(100vh - 150px);
+  height: calc(100vh - 175px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1106,6 +1109,7 @@ export default {
 }
 
 .canvas {
+  overflow: auto;
   background: white;
   border: 2px dashed #ccc;
   position: relative;
