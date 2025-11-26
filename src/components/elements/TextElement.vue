@@ -17,15 +17,16 @@
       :style="textStyle"
       @dblclick="handleDoubleClick"
     >
-      <div
+      <marquee
         v-if="element.textAlign === 'scroll'"
         class="scroll-text"
-        :style="scrollStyle"
-        ref="scrollText"
+        :behavior="'scroll'"
+        :direction="'left'"
+        :scrollamount="element.scrollSpeed || 5"
         :key="'scroll-' + currentText"
       >
         {{ currentText }}
-      </div>
+      </marquee>
       <div v-else>
         {{ currentText }}
       </div>
@@ -89,8 +90,7 @@ export default {
       startElementX: 0,
       startElementY: 0,
       currentTextIndex: 0,
-      textTimer: null,
-      scrollAnimation: null
+      textTimer: null
     }
   },
   computed: {
@@ -144,19 +144,7 @@ export default {
         textAlign: this.element.textAlign === 'scroll' ? 'left' : this.element.textAlign
       }
     },
-    scrollStyle() {
-      if (this.element.textAlign !== 'scroll') return {}
-      
-      const speed = this.element.scrollSpeed || 5
-      // 根据速度计算动画持续时间，速度越快持续时间越短
-      const duration = Math.max(3, 12 - speed) + 's'
-      
-      return {
-        animation: `scrollText ${duration} linear infinite`,
-        whiteSpace: 'nowrap',
-        display: 'inline-block'
-      }
-    },
+
     currentText() {
       if (!this.element.texts || this.element.texts.length === 0) {
         return '请输入文本内容'
@@ -177,32 +165,9 @@ export default {
       }
     },
     'preview': {
-      handler(newVal) {
-        console.log('Preview mode changed:', newVal, 'textAlign:', this.element.textAlign)
+      handler() {
         // 当进入或退出预览模式时，重新设置文本轮播
         this.setupTextRotation()
-        // 重启滚动动画
-        this.$nextTick(() => {
-          this.restartScrollAnimation()
-        })
-      }
-    },
-    'element.textAlign': {
-      handler(newVal, oldVal) {
-        console.log('textAlign changed from', oldVal, 'to', newVal)
-        // 当对齐方式改变时，重启滚动动画
-        this.$nextTick(() => {
-          this.restartScrollAnimation()
-        })
-      }
-    },
-    'element.scrollSpeed': {
-      handler(newVal) {
-        console.log('scrollSpeed changed to', newVal)
-        // 当滚动速度改变时，重启滚动动画
-        this.$nextTick(() => {
-          this.restartScrollAnimation()
-        })
       }
     }
   },
@@ -223,25 +188,7 @@ export default {
         this.textTimer = null
       }
     },
-    restartScrollAnimation() {
-      console.log('restartScrollAnimation called, textAlign:', this.element.textAlign)
-      if (this.element.textAlign === 'scroll') {
-        this.$nextTick(() => {
-          const element = this.$refs.scrollText
-          console.log('scrollText element:', element)
-          if (element) {
-            // 强制重启CSS动画
-            element.style.animation = 'none'
-            // 触发重排
-            void element.offsetHeight
-            const speed = this.element.scrollSpeed || 5
-            const duration = Math.max(3, 12 - speed) + 's'
-            console.log('Setting animation with duration:', duration)
-            element.style.animation = `scrollText ${duration} linear infinite`
-          }
-        })
-      }
-    },
+
     handleClick() {
       if (!this.preview) {
         this.$emit('select', this.element)
@@ -372,10 +319,6 @@ export default {
   mounted() {
     this.currentTextIndex = this.element.currentTextIndex || 0
     this.setupTextRotation()
-    // 启动滚动动画
-    this.$nextTick(() => {
-      this.restartScrollAnimation()
-    })
   },
   beforeDestroy() {
     this.clearTextTimer()
@@ -427,26 +370,7 @@ export default {
   position: relative;
 }
 
-.scroll-text {
-  display: inline-block;
-  white-space: nowrap;
-}
 
-@keyframes scrollText {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-/* 确保动画正常显示 */
-.text-element .scroll-text {
-  animation-play-state: running !important;
-  will-change: transform;
-  animation-fill-mode: both;
-}
 
 /* 确保滚动容器正确设置 */
 .text-element .text-scroll {
