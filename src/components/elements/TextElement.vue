@@ -1,52 +1,29 @@
 <template>
-  <div
-    class="text-element"
-    :class="{ selected: selected }"
-    :style="elementStyle"
-    @click.stop="handleClick"
-    @mousedown="handleMouseDown"
-  >
-    <div
-      class="text-content"
-      :class="{ 
-        'text-scroll': element.textAlign === 'scroll',
-        'text-left': element.textAlign === 'left',
-        'text-center': element.textAlign === 'center',
-        'text-right': element.textAlign === 'right'
-      }"
-      :style="textStyle"
-      @dblclick="handleDoubleClick"
-    >
-      <marquee
-        v-if="element.textAlign === 'scroll'"
-        class="scroll-text"
-        :behavior="'scroll'"
-        :direction="'left'"
-        :scrollamount="element.scrollSpeed || 5"
-        :key="'scroll-' + currentText"
-      >
+  <div class="text-element" :class="{ selected: selected }" :style="elementStyle" @click.stop="handleClick"
+    @mousedown="handleMouseDown">
+    <div class="text-content" :class="{
+      'text-scroll': element.textAlign === 'scroll',
+      'text-left': element.textAlign === 'left',
+      'text-center': element.textAlign === 'center',
+      'text-right': element.textAlign === 'right'
+    }" :style="textStyle" @dblclick="handleDoubleClick">
+      <marquee v-if="element.textAlign === 'scroll'" class="scroll-text" :behavior="'scroll'" :direction="'left'"
+        :scrollamount="element.scrollSpeed || 5" :key="'scroll-' + currentText">
         {{ currentText }}
       </marquee>
       <div v-else>
         {{ currentText }}
       </div>
     </div>
-    
+
     <!-- 编辑模式 -->
-    <textarea
-      v-if="isEditing && !preview"
-      ref="textInput"
-      v-model="editingText"
-      class="text-input"
-      :style="textInputStyle"
-      @blur="handleEditBlur"
-      @keydown.enter.ctrl="handleEditBlur"
-    ></textarea>
-    
+    <textarea v-if="isEditing && !preview" ref="textInput" v-model="editingText" class="text-input"
+      :style="textInputStyle" @blur="handleEditBlur" @keydown.enter.ctrl="handleEditBlur"></textarea>
+
     <div class="text-info" v-if="selected && !preview && element.texts && element.texts.length > 1">
       <span>{{ currentTextIndex + 1 }} / {{ element.texts.length }}</span>
     </div>
-    
+
     <div class="resize-handles" v-if="selected && !preview">
       <div class="resize-handle nw" @mousedown.stop="handleResizeStart('nw', $event)"></div>
       <div class="resize-handle ne" @mousedown.stop="handleResizeStart('ne', $event)"></div>
@@ -94,6 +71,21 @@ export default {
     }
   },
   computed: {
+    /**
+     * 计算并返回元素的样式对象
+     * 
+     * @returns {Object} 包含元素位置、尺寸、背景色、透明度、层级等样式的对象
+     *  - position: 定位方式，固定为'absolute'
+     *  - left: 元素左侧位置(px)
+     *  - top: 元素顶部位置(px) 
+     *  - width: 元素宽度(px)
+     *  - height: 元素高度(px)
+     *  - backgroundColor: 背景颜色
+     *  - opacity: 透明度(0-1)
+     *  - zIndex: 元素层级
+     *  - border: 选中状态下的边框样式
+     *  - overflow: 选中状态下的溢出处理
+     */
     elementStyle() {
       return {
         position: 'absolute',
@@ -121,17 +113,17 @@ export default {
         alignItems: 'center',
         lineHeight: '1.2'
       }
-      
+
       // 为滚动文本调整样式
       if (this.element.textAlign === 'scroll') {
         baseStyle.justifyContent = 'flex-start'
         baseStyle.overflow = 'hidden'
       } else {
-        baseStyle.justifyContent = this.element.textAlign === 'center' ? 'center' : 
-                                   this.element.textAlign === 'right' ? 'flex-end' : 'flex-start'
+        baseStyle.justifyContent = this.element.textAlign === 'center' ? 'center' :
+          this.element.textAlign === 'right' ? 'flex-end' : 'flex-start'
         baseStyle.textAlign = this.element.textAlign
       }
-      
+
       return baseStyle
     },
     textInputStyle() {
@@ -144,7 +136,7 @@ export default {
         textAlign: this.element.textAlign === 'scroll' ? 'left' : this.element.textAlign
       }
     },
-
+    // 获取当前显示的文本内容
     currentText() {
       if (!this.element.texts || this.element.texts.length === 0) {
         return '请输入文本内容'
@@ -172,9 +164,13 @@ export default {
     }
   },
   methods: {
+    /**
+     * 设置文本轮播功能
+     * 如果存在多个文本且设置了切换间隔，则启动定时器轮播显示文本
+     * 在预览模式或编辑模式下生效
+     */
     setupTextRotation() {
       this.clearTextTimer()
-      
       // 在预览模式或编辑模式下，如果有多个文本且设置了切换间隔，启动轮播
       if (this.element.texts && this.element.texts.length > 1 && this.element.interval > 0) {
         this.textTimer = setInterval(() => {
@@ -182,6 +178,10 @@ export default {
         }, this.element.interval)
       }
     },
+    /**
+     * 清除文本轮播定时器
+     * 如果存在活动的定时器则清除它，并将定时器引用置为null
+     */
     clearTextTimer() {
       if (this.textTimer) {
         clearInterval(this.textTimer)
@@ -199,6 +199,11 @@ export default {
         this.startEditing()
       }
     },
+    /**
+     * 开始编辑文本内容
+     * 设置编辑状态为true，保存当前文本到编辑缓冲区
+     * 并在下一个DOM更新周期后自动聚焦并选中输入框内容
+     */
     startEditing() {
       this.isEditing = true
       this.editingText = this.currentText
@@ -209,11 +214,16 @@ export default {
         }
       })
     },
+    /**
+     * 处理文本编辑完成事件
+     * 当编辑框失去焦点时，如果编辑内容不为空，则更新元素文本内容
+     * 并触发更新事件，同时关闭编辑状态
+     */
     handleEditBlur() {
       if (this.editingText.trim() !== '') {
         const newTexts = [...this.element.texts]
         newTexts[this.currentTextIndex] = this.editingText.trim()
-        
+
         this.$emit('update', {
           ...this.element,
           texts: newTexts
@@ -221,27 +231,27 @@ export default {
       }
       this.isEditing = false
     },
+    // 处理鼠标按下事件，开始元素拖动
     handleMouseDown(event) {
       if (this.preview || this.isEditing) return
-      
       this.isDragging = true
       this.startX = event.clientX
       this.startY = event.clientY
       this.startElementX = this.element.x
       this.startElementY = this.element.y
-      
       document.addEventListener('mousemove', this.handleMouseMove)
       document.addEventListener('mouseup', this.handleMouseUp)
       event.preventDefault()
     },
+    // 处理鼠标移动事件，实现元素的拖动和调整大小功能
     handleMouseMove(event) {
       if (this.isDragging) {
         const deltaX = event.clientX - this.startX
         const deltaY = event.clientY - this.startY
-        
+
         const newX = Math.max(0, Math.round(this.startElementX + deltaX))
         const newY = Math.max(0, Math.round(this.startElementY + deltaY))
-        
+
         this.$emit('update', {
           ...this.element,
           x: newX,
@@ -251,13 +261,18 @@ export default {
         this.handleResize(event)
       }
     },
+    // 处理鼠标抬起事件
     handleMouseUp() {
+      // 重置拖动和调整大小状态标志
       this.isDragging = false
       this.isResizing = false
+      // 清除调整方向
       this.resizeDirection = ''
+      // 移除鼠标移动和抬起事件监听器
       document.removeEventListener('mousemove', this.handleMouseMove)
       document.removeEventListener('mouseup', this.handleMouseUp)
     },
+    // 处理元素调整大小开始事件
     handleResizeStart(direction, event) {
       this.isResizing = true
       this.resizeDirection = direction
@@ -267,20 +282,34 @@ export default {
       this.startHeight = this.element.height
       this.startElementX = this.element.x
       this.startElementY = this.element.y
-      
+
       document.addEventListener('mousemove', this.handleMouseMove)
       document.addEventListener('mouseup', this.handleMouseUp)
       event.preventDefault()
     },
+    /**
+     * @param {MouseEvent} event - 鼠标事件对象，包含当前鼠标位置信息
+     * @emits update - 当元素大小或位置改变时触发，携带更新后的元素属性
+     * 
+     * 根据调整方向(resizeDirection)计算元素的新位置和尺寸：
+     * - 'nw'：从西北角调整，同时改变宽度、高度和位置
+     * - 'ne'：从东北角调整，改变宽度和高度，调整Y位置
+     * - 'sw'：从西南角调整，改变宽度和高度，调整X位置
+     * - 'se'：从东南角调整，改变宽度和高度
+     * 
+     * 确保元素的最小宽度为50px，最小高度为30px
+     * 确保元素位置不会超出画布边界(不小于0)
+     * 所有尺寸和位置值都会四舍五入为整数
+     */
     handleResize(event) {
       const deltaX = event.clientX - this.startX
       const deltaY = event.clientY - this.startY
-      
+
       let newWidth = this.startWidth
       let newHeight = this.startHeight
       let newX = this.startElementX
       let newY = this.startElementY
-      
+
       switch (this.resizeDirection) {
         case 'nw':
           newWidth = Math.max(50, this.startWidth - deltaX)
@@ -303,7 +332,7 @@ export default {
           newHeight = Math.max(30, this.startHeight + deltaY)
           break
       }
-      
+
       this.$emit('update', {
         ...this.element,
         x: Math.max(0, Math.round(newX)),
@@ -312,16 +341,17 @@ export default {
         height: Math.round(newHeight)
       })
     },
+    // 删除
     handleDelete() {
       this.$emit('delete', this.element.id)
     }
   },
   mounted() {
     this.currentTextIndex = this.element.currentTextIndex || 0
-    this.setupTextRotation()
+    // this.setupTextRotation()
   },
   beforeDestroy() {
-    this.clearTextTimer()
+    // this.clearTextTimer()
     document.removeEventListener('mousemove', this.handleMouseMove)
     document.removeEventListener('mouseup', this.handleMouseUp)
   }
