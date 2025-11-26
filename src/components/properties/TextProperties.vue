@@ -205,56 +205,6 @@
           </div>
         </el-form-item>
       </div>
-
-      <!-- 文本内容管理 -->
-      <!-- <div class="form-section">
-        <div class="section-header">
-          <i class="el-icon-document"></i>
-          <span>文本内容</span>
-        </div>
-        <el-form-item label="文本列表" class="text-manager-item">
-          <div class="text-list-wrapper">
-            <div v-if="!localElement.texts || localElement.texts.length === 0" class="empty-text-list">
-              <i class="el-icon-document-remove"></i>
-              <p>暂无文本内容</p>
-            </div>
-            <div v-else class="text-list">
-              <div v-for="(text, index) in localElement.texts" :key="index" class="text-item"
-                :class="{ 'active-text': index === currentTextIndex }">
-                <div class="text-content-wrapper">
-                  <el-input v-model="localElement.texts[index]" type="textarea" :rows="3" @input="updateElement"
-                    placeholder="请输入文本内容" class="text-content-input" resize="none"></el-input>
-                  <div class="text-actions" v-if="localElement.texts.length > 1">
-                    <el-button type="text" size="mini" @click="removeText(index)" class="text-remove-btn">
-                      <i class="el-icon-delete"></i> 删除
-                    </el-button>
-                  </div>
-                </div>
-                <div class="text-info">
-                  <span class="text-index">文本 #{{ index + 1 }}</span>
-                  <span class="text-length">{{ text.length }} 字符</span>
-                </div>
-              </div>
-            </div>
-            <el-button size="small" @click="addText" class="add-text-btn" icon="el-icon-plus">
-              添加文本
-            </el-button>
-          </div>
-        </el-form-item>
-
-        <el-form-item label="切换间隔" v-if="localElement.texts && localElement.texts.length > 1" class="interval-item">
-          <div class="slider-input-group">
-            <el-slider v-model="localElement.interval" :min="500" :max="60000" :step="500" @change="updateElement"
-              class="compact-slider"></el-slider>
-            <el-input v-model.number="localElement.interval" @change="updateElement" size="mini" class="compact-input">
-              <template slot="append">ms</template>
-            </el-input>
-          </div>
-          <div class="interval-display">
-            {{ (localElement.interval / 1000).toFixed(1) }}秒
-          </div>
-        </el-form-item>
-      </div> -->
     </el-form>
   </div>
 </template>
@@ -359,31 +309,6 @@ export default {
       if (speed <= 6) return '中速'
       return '快速'
     },
-    // addText() {
-    //   if (!this.localElement.texts) {
-    //     this.localElement.texts = []
-    //   }
-    //   this.localElement.texts.push('新文本内容')
-    //   this.updateElement()
-    // },
-    // removeText(index) {
-    //   if (this.localElement.texts.length > 1) {
-    //     this.$confirm('确定要删除这个文本吗？', '提示', {
-    //       confirmButtonText: '确定',
-    //       cancelButtonText: '取消',
-    //       type: 'warning'
-    //     }).then(() => {
-    //       this.localElement.texts.splice(index, 1)
-    //       this.updateElement()
-    //       this.$message({
-    //         type: 'success',
-    //         message: '删除成功!'
-    //       })
-    //     }).catch(() => {
-    //       // 用户取消删除
-    //     })
-    //   }
-    // }
   }
 }
 </script>
@@ -455,13 +380,6 @@ export default {
 .slider-input-group >>> .el-input__inner{
    padding: 0 7px;
 }
-
-/* ::v-deep .compact-input .el-input__inner {
-  padding: 0 8px;
-  text-align: center;
-  height: 28px;
-  line-height: 28px;
-} */
 
 .full-width-select {
   width: 100%;
@@ -554,18 +472,6 @@ export default {
   padding: 2px 6px;
   font-size: 11px;
 }
-
-/* .add-text-btn {
-  width: 100%;
-  margin-top: 8px;
-} */
-
-/* .interval-display {
-  font-size: 12px;
-  color: #909399;
-  text-align: center;
-  margin-top: 5px;
-} */
 
 /* 响应式调整 */
 @media (max-width: 768px) {
