@@ -147,10 +147,13 @@ export default {
     },
     scrollTextStyle() {
       const speed = this.element.scrollSpeed || 5
+      // 调整速度计算：speed=5 为中速，范围 1-9
+      // 1=很慢(20s), 5=中等(8s), 9=很快(4s)
+      const duration = 20 - (speed * 1.6)
       return {
         position: 'absolute',
         whiteSpace: 'nowrap',
-        animation: `scroll-${this.element.id} ${10 / speed}s linear infinite`,
+        animation: `scroll-${this.element.id} ${duration}s linear infinite`,
         paddingRight: '50px'
       }
     },
