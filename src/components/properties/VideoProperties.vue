@@ -312,9 +312,9 @@ export default {
         } else {
           // 如果是同一个元素，只同步可能在外部被修改的属性
           // 但保持当前用户正在编辑的属性不变
-          const propsToSync = ['id']
+          const propsToSync = ['id', 'x', 'y', 'width', 'height', 'zIndex']
           propsToSync.forEach(prop => {
-            if (newVal[prop] !== undefined) {
+            if (newVal[prop] !== undefined && newVal[prop] !== this.localElement[prop]) {
               this.localElement[prop] = newVal[prop]
             }
           })
