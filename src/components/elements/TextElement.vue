@@ -7,10 +7,11 @@
       'text-center': element.textAlign === 'center',
       'text-right': element.textAlign === 'right'
     }" :style="textStyle" @dblclick="handleDoubleClick">
-      <marquee v-if="element.textAlign === 'scroll'" class="scroll-text" :behavior="'scroll'" :direction="'left'"
-        :scrollamount="element.scrollSpeed || 5" :key="'scroll-' + currentText">
-        {{ currentText }}
-      </marquee>
+      <div v-if="element.textAlign === 'scroll'" class="scroll-container" :style="scrollContainerStyle" ref="scrollContainer">
+        <div class="scroll-text" :style="scrollTextStyle" ref="scrollText">
+          {{ currentText }}
+        </div>
+      </div>
       <div v-else>
         {{ currentText }}
       </div>
@@ -136,6 +137,23 @@ export default {
         textAlign: this.element.textAlign === 'scroll' ? 'left' : this.element.textAlign
       }
     },
+    scrollContainerStyle() {
+      return {
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        position: 'relative'
+      }
+    },
+    scrollTextStyle() {
+      const speed = this.element.scrollSpeed || 5
+      return {
+        position: 'absolute',
+        whiteSpace: 'nowrap',
+        animation: `scroll-${this.element.id} ${10 / speed}s linear infinite`,
+        paddingRight: '50px'
+      }
+    },
     // 获取当前显示的文本内容
     currentText() {
       if (!this.element.texts || this.element.texts.length === 0) {
@@ -160,6 +178,23 @@ export default {
       handler() {
         // 当进入或退出预览模式时，重新设置文本轮播
         this.setupTextRotation()
+        this.$nextTick(() => {
+          this.addScrollAnimation()
+        })
+      }
+    },
+    'element.textAlign': {
+      handler() {
+        this.$nextTick(() => {
+          this.addScrollAnimation()
+        })
+      }
+    },
+    'currentText': {
+      handler() {
+        this.$nextTick(() => {
+          this.addScrollAnimation()
+        })
       }
     }
   },
@@ -344,14 +379,59 @@ export default {
     // 删除
     handleDelete() {
       this.$emit('delete', this.element.id)
+    },
+    // 添加滚动动画
+    addScrollAnimation() {
+      if (this.element.textAlign === 'scroll') {
+        this.$nextTick(() => {
+          const container = this.$refs.scrollContainer
+          const text = this.$refs.scrollText
+          
+          if (container && text) {
+            const containerWidth = container.offsetWidth
+            const textWidth = text.offsetWidth
+            
+            const styleId = `scroll-animation-${this.element.id}`
+            let styleElement = document.getElementById(styleId)
+            
+            if (styleElement) {
+              styleElement.remove()
+            }
+            
+            styleElement = document.createElement('style')
+            styleElement.id = styleId
+            styleElement.textContent = `
+              @keyframes scroll-${this.element.id} {
+                from {
+                  transform: translateX(${containerWidth}px);
+                }
+                to {
+                  transform: translateX(-${textWidth}px);
+                }
+              }
+            `
+            document.head.appendChild(styleElement)
+          }
+        })
+      }
+    },
+    // 移除滚动动画
+    removeScrollAnimation() {
+      const styleId = `scroll-animation-${this.element.id}`
+      const styleElement = document.getElementById(styleId)
+      if (styleElement) {
+        styleElement.remove()
+      }
     }
   },
   mounted() {
     this.currentTextIndex = this.element.currentTextIndex || 0
-    // this.setupTextRotation()
+    this.setupTextRotation()
+    this.addScrollAnimation()
   },
   beforeDestroy() {
-    // this.clearTextTimer()
+    this.clearTextTimer()
+    this.removeScrollAnimation()
     document.removeEventListener('mousemove', this.handleMouseMove)
     document.removeEventListener('mouseup', this.handleMouseUp)
   }
@@ -400,7 +480,17 @@ export default {
   position: relative;
 }
 
+.scroll-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
 
+.scroll-text {
+  display: inline-block;
+  will-change: transform;
+}
 
 /* 确保滚动容器正确设置 */
 .text-element .text-scroll {
