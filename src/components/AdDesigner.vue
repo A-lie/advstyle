@@ -196,7 +196,7 @@ export default {
   data() {
     return {
       canvasWidth: 1920,
-      canvasHeight: 750,
+      canvasHeight: 1080,
       elements: [],
       selectedElement: null,
       canvasSelected: false,
@@ -233,22 +233,12 @@ export default {
   methods: {
     /**
      * 计算并返回画布的缩放比例
-     * 根据画布容器的尺寸和画布原始尺寸计算合适的缩放比例
-     * 确保画布在容器中完整显示且不超过原始大小
-     * @returns {string} 返回CSS的scale变换字符串，例如'scale(0.8)'
+     * 直接返回不缩放，保持画布原始尺寸
+     * @returns {string} 返回CSS的scale变换字符串，固定为'scale(1)'
      */
     getCanvasScale() {
-      const container = this.$refs.canvasContainer
-      if (!container) return 'scale(1)'
-
-      const containerWidth = container.clientWidth - 40
-      const containerHeight = container.clientHeight - 40
-
-      const scaleX = containerWidth / this.canvasWidth
-      const scaleY = containerHeight / this.canvasHeight
-      const scale = Math.min(scaleX, scaleY, 1)
-
-      return `scale(${scale})`
+      // 直接返回不缩放，保持画布原始尺寸
+      return 'scale(1)'
     },
     updateCanvasSize() {
       this.$nextTick(() => {
@@ -1101,18 +1091,18 @@ export default {
 }
 
 .canvas-container {
-  height: calc(100vh - 175px);
-  display: flex;
+  height: calc(100vh - 170px);
+  margin-top: 15px;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
-  overflow: hidden;
+  align-items: center; */
+  overflow: auto;
+  border: 2px dashed #ccc;
 }
 
 .canvas {
-  overflow: auto;
   background: white;
-  border: 2px dashed #ccc;
-  position: relative;
+  border: 2px solid #67c23a;
   transform-origin: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
