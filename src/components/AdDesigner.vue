@@ -63,7 +63,7 @@
 
 
       <!-- 中间编辑区域 -->
-      <el-card class="box-card">
+      <el-card class="box-card editor-main-card">
         <el-main class="editor-main">
           <div class="editor-header">
             <div class="editor-title">
@@ -91,7 +91,7 @@
       </el-card>
 
       <!-- 右侧属性设置 -->
-      <el-card class="box-card" style="width: 850px;">
+      <el-card class="box-card" style="width: 800px;">
         <div class="property-content" v-if="selectedElement">
           <component :is="getPropertyComponentName(selectedElement.type)" :element="selectedElement"
             @update="updateElement" @layer-action="handleLayerAction" />
@@ -937,6 +937,12 @@ export default {
 .box-card {
   margin: 10px;
   overflow-y: auto;
+}
+
+.editor-main-card {
+  flex: 1;
+  min-width: 990px;
+  flex-shrink: 0;
 }
 
 .library-header h3 {
