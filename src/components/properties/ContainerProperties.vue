@@ -104,14 +104,14 @@
           <div class="color-control-wrapper">
             <el-color-picker 
               v-model="localElement.backgroundColor"
-              @change="updateElement"
+              @change="handleInputChange('backgroundColor', $event)"
               show-alpha
               size="mini"
               class="compact-color-picker"
             ></el-color-picker>
             <el-input
               v-model="localElement.backgroundColor"
-              @change="updateElement"
+              @change="handleInputChange('backgroundColor', $event)"
               size="mini"
               placeholder="透明"
               class="color-input"
@@ -248,7 +248,7 @@
             ></el-color-picker>
             <el-input
               v-model="localElement.borderColor"
-              @change="updateElement"
+              @change="handleInputChange('borderColor', $event)"
               size="mini"
               class="color-input"
             ></el-input>
@@ -262,7 +262,7 @@
         >
           <el-select 
             v-model="localElement.borderStyle" 
-            @change="updateElement"
+            @change="handleInputChange('borderStyle', $event)"
             class="full-width-select"
             size="mini"
           >
@@ -306,14 +306,14 @@
           <div class="color-control-wrapper">
             <el-color-picker 
               v-model="localElement.shadowColor"
-              @change="updateElement"
+              @change="handleInputChange('shadowColor', $event)"
               show-alpha
               size="mini"
               class="compact-color-picker"
             ></el-color-picker>
             <el-input
               v-model="localElement.shadowColor"
-              @change="updateElement"
+              @change="handleInputChange('shadowColor', $event)"
               size="mini"
               placeholder="rgba(0,0,0,0.5)"
               class="color-input"
@@ -460,6 +460,12 @@ export default {
             shadowOffsetY: newVal.shadowOffsetY || 2,
             id: newVal.id
           }
+        } else {
+          // 如果是同一个元素，同步更新所有属性，但保留用户正在编辑的值
+          this.localElement = {
+            ...this.localElement,
+            ...newVal
+          }
         }
       },
       deep: true,
@@ -472,9 +478,16 @@ export default {
     },
     
     handleInputChange(prop, value) {
-      // 确保输入的值是数字类型
+      // 根据属性类型处理不同的输入值
       if (value !== null && value !== undefined) {
-        this.localElement[prop] = Number(value)
+        // 数字类型的属性
+        const numberProps = ['x', 'y', 'width', 'height', 'opacity', 'zIndex', 'borderWidth', 'borderRadius', 'shadowBlur', 'shadowOffsetX', 'shadowOffsetY']
+        if (numberProps.includes(prop)) {
+          this.localElement[prop] = Number(value)
+        } else {
+          // 字符串类型的属性
+          this.localElement[prop] = value
+        }
       }
       this.updateElement()
     },
@@ -556,11 +569,12 @@ export default {
   width: 80px !important;
 }
 
-::v-deep .compact-input .el-input__inner {
+.slider-input-group>>>.el-input-group__append {
+  padding: 0 10px;
+}
+
+.slider-input-group>>>.el-input__inner {
   padding: 0 8px;
-  text-align: center;
-  height: 28px;
-  line-height: 28px;
 }
 
 .full-width-select {

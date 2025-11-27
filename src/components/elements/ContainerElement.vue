@@ -50,6 +50,14 @@ export default {
   },
   computed: {
     elementStyle() {
+      const borderStyle = this.element.borderWidth > 0 
+        ? `${this.element.borderWidth}px ${this.element.borderStyle || 'solid'} ${this.element.borderColor || '#409EFF'}`
+        : 'none'
+      
+      const boxShadow = this.element.shadowBlur > 0 || this.element.shadowOffsetX !== 0 || this.element.shadowOffsetY !== 0
+        ? `${this.element.shadowOffsetX || 0}px ${this.element.shadowOffsetY || 0}px ${this.element.shadowBlur || 0}px ${this.element.shadowColor || 'rgba(0,0,0,0.3)'}`
+        : 'none'
+
       return {
         position: 'absolute',
         left: this.element.x + 'px',
@@ -59,7 +67,10 @@ export default {
         backgroundColor: this.element.backgroundColor,
         opacity: this.element.opacity / 255,
         zIndex: this.element.zIndex,
-        border: this.selected && !this.preview ? '2px solid #409eff' : '1px solid #ddd'
+        border: this.selected && !this.preview ? '2px solid #409eff' : borderStyle,
+        borderRadius: (this.element.borderRadius || 0) + 'px',
+        boxShadow: boxShadow,
+        outline: this.selected && !this.preview ? '2px solid #409eff' : 'none'
       }
     }
   },
