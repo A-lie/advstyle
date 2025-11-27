@@ -166,6 +166,7 @@ export default {
     }
   },
   watch: {
+    // 监听文本轮播相关的属性变化
     'element.texts': {
       handler() {
         this.setupTextRotation()
@@ -177,9 +178,9 @@ export default {
         this.setupTextRotation()
       }
     },
+    // 监听滚动动画相关的属性变化
     'preview': {
       handler() {
-        // 当进入或退出预览模式时，重新设置文本轮播
         this.setupTextRotation()
         this.$nextTick(() => {
           this.addScrollAnimation()
@@ -202,11 +203,7 @@ export default {
     }
   },
   methods: {
-    /**
-     * 设置文本轮播功能
-     * 如果存在多个文本且设置了切换间隔，则启动定时器轮播显示文本
-     * 在预览模式或编辑模式下生效
-     */
+    // 设置文本轮播功能
     setupTextRotation() {
       this.clearTextTimer()
       // 在预览模式或编辑模式下，如果有多个文本且设置了切换间隔，启动轮播
