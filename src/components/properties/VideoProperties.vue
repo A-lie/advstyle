@@ -284,7 +284,7 @@ export default {
   watch: {
     element: {
       handler(newVal) {
-        // 只在元素ID变化时才重置localElement
+        // 检查是否是不同的元素，或者localElement还未初始化
         if (!this.localElement || this.localElement.id !== newVal.id) {
           this.localElement = {
             x: newVal.x || 0,
@@ -309,6 +309,15 @@ export default {
           this.isPlaying = false
           this.videoDuration = 0
           this.videoSize = 0
+        } else {
+          // 如果是同一个元素，只同步可能在外部被修改的属性
+          // 但保持当前用户正在编辑的属性不变
+          const propsToSync = ['id']
+          propsToSync.forEach(prop => {
+            if (newVal[prop] !== undefined) {
+              this.localElement[prop] = newVal[prop]
+            }
+          })
         }
       },
       deep: true,
