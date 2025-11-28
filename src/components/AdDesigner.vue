@@ -2,7 +2,7 @@
   <div class="ad-designer">
     <el-container style="height: 100%;">
       <!-- 左侧组件库 -->
-      <el-card class="box-card" style="width: 520px;">
+      <el-card class="box-card" style="width: 15%;">
         <div class="library-header">
           <h3>组件库</h3>
         </div>
@@ -91,7 +91,7 @@
       </el-card>
 
       <!-- 右侧属性设置 -->
-      <el-card class="box-card" style="width: 800px;">
+      <el-card class="box-card" style="width: 23%;">
         <div class="property-content" v-if="selectedElement">
           <component :is="getPropertyComponentName(selectedElement.type)" :element="selectedElement"
             @update="updateElement" @layer-action="handleLayerAction" />
@@ -941,7 +941,7 @@ export default {
 
 .editor-main-card {
   flex: 1;
-  min-width: 990px;
+  /* min-width: 990px; */
   flex-shrink: 0;
 }
 
@@ -1125,6 +1125,7 @@ export default {
   align-items: center; */
   height: 560px;
   overflow: auto;
+  border: 2px dashed #ccc;
 }
 
 .preview-header {
