@@ -309,7 +309,7 @@ export default {
 
 <style scoped>
 .panel-title {
-  margin: 0 0 20px 0;
+  /* margin: 0 0 20px 0; */
   color: #303133;
   font-size: 18px;
   font-weight: 600;
@@ -322,7 +322,7 @@ export default {
 }
 
 .form-section {
-  margin-bottom: 24px;
+  margin-bottom: 10px;
   padding: 10px;
   background-color: white;
   border-radius: 6px;
@@ -357,6 +357,7 @@ export default {
 .slider-input-group {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
