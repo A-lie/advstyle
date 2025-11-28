@@ -160,9 +160,9 @@
       </div>
 
       <div slot="footer">
-        <el-button @click="saveVisible = false">关闭</el-button>
         <el-button type="primary" @click="downloadJson">下载 JSON 文件</el-button>
-        <el-button type="success" @click="saveToLocalStorage">保存到本地</el-button>
+        <el-button @click="saveVisible = false">关闭</el-button>
+        <!-- <el-button type="success" @click="saveToLocalStorage">保存到本地</el-button> -->
       </div>
     </el-dialog>
   </div>
@@ -538,17 +538,17 @@ export default {
       this.$message.success('JSON 文件已下载')
     },
     // JSON 配置数据保存到本地
-    saveToLocalStorage() {
-      try {
-        const designData = JSON.parse(this.designJsonData)
-        localStorage.setItem('adDesign', JSON.stringify(designData))
-        this.$message.success('设计已保存到本地存储')
-        this.saveVisible = false
-      } catch (err) {
-        console.error('保存失败:', err)
-        this.$message.error('保存失败，JSON 数据格式错误')
-      }
-    },
+    // saveToLocalStorage() {
+    //   try {
+    //     const designData = JSON.parse(this.designJsonData)
+    //     localStorage.setItem('adDesign', JSON.stringify(designData))
+    //     this.$message.success('设计已保存到本地存储')
+    //     this.saveVisible = false
+    //   } catch (err) {
+    //     console.error('保存失败:', err)
+    //     this.$message.error('保存失败，JSON 数据格式错误')
+    //   }
+    // },
     // 保存为节目
     async saveAsProgram() {
       // 验证节目名称
