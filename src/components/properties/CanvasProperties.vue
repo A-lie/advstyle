@@ -62,6 +62,9 @@ export default {
       selectedPreset: ''
     }
   },
+  mounted() {
+    this.updateSelectedPreset()
+  },
   computed: {
     // 计算并返回画布的宽高比
     aspectRatio() {
@@ -74,9 +77,11 @@ export default {
   watch: {
     canvasWidth(newVal) {
       this.localCanvasWidth = newVal
+      this.updateSelectedPreset()
     },
     canvasHeight(newVal) {
       this.localCanvasHeight = newVal
+      this.updateSelectedPreset()
     }
   },
   methods: {
@@ -110,6 +115,20 @@ export default {
     },
     getGCD(a, b) {
       return b === 0 ? a : this.getGCD(b, a % b)
+    },
+    updateSelectedPreset() {
+      // 根据当前画布尺寸更新选中的预设
+      const currentSize = `${this.localCanvasWidth}x${this.localCanvasHeight}`
+      const presets = [
+        '1920x1080', '1366x768', '1280x720', '1024x768', 
+        '800x600', '1080x1920', '768x1366', '720x1280'
+      ]
+      
+      if (presets.includes(currentSize)) {
+        this.selectedPreset = currentSize
+      } else {
+        this.selectedPreset = ''
+      }
     }
   }
 }
