@@ -231,11 +231,6 @@ export default {
     window.addEventListener('resize', this.updateCanvasScale)
   },
   methods: {
-    /**
-     * 计算并返回画布的缩放比例
-     * 直接返回不缩放，保持画布原始尺寸
-     * @returns {string} 返回CSS的scale变换字符串，固定为'scale(1)'
-     */
     getCanvasScale() {
       // 直接返回不缩放，保持画布原始尺寸
       return 'scale(1)'
@@ -467,12 +462,13 @@ export default {
     },
     // 保存设计
     saveDesign() {
+      // 使用与保存为节目相同的格式，输出后端API期望的字段名
       const designData = {
         canvas: {
           width: this.canvasWidth,
           height: this.canvasHeight
         },
-        elements: this.elements.map(el => ({ ...el })),
+        elements: this.elements.map(el => this.convertElementToApiFormat(el)),
         metadata: {
           version: '1.0.0',
           createdAt: new Date().toISOString(),
@@ -628,6 +624,23 @@ export default {
         'container': 1 // 容器当作图片类型
       }
       return typeMap[elementType] || 1
+    },
+    // 将元素转换为API格式（使用后端API字段名）
+    convertElementToApiFormat(element) {
+      // 如果是文本元素，转换字段名为后端API格式
+      if (element.type === 'text') {
+        const { fontColor, fontWeight, scrollSpeed, ...restElement } = element
+        return {
+          ...restElement,
+          // 使用后端API期望的字段名
+          textcolor: fontColor || '#000000',
+          bold: fontWeight ? 1 : 0,
+          roll: scrollSpeed || 5,
+          fontname: element.fontname || 'sans-serif'
+        }
+      }
+      
+      return { ...element }
     },
     // 将元素转换为资源列表
     convertElementToResources(element) {
